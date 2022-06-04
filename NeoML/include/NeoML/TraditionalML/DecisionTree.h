@@ -21,175 +21,215 @@ limitations under the License.
 #include <NeoML/TraditionalML/TrainingModel.h>
 #include <NeoML/Random.h>
 
-namespace NeoML {
-
-class CDecisionTreeNodeBase;
-class CDecisionTreeNodeStatisticBase;
-
-// The node types for a decision tree
-enum TDecisionTreeNodeType {
-	DTNT_Undefined = 0,
-	DTNT_Const = 1, // a constant node
-	DTNT_Discrete = 3, // a node that uses a discrete feature for splitting
-	DTNT_Continuous = 4 // a node that uses a continuous feature for splitting
-};
-
-// The information about a decision tree node
-struct CDecisionTreeNodeInfo {
-	TDecisionTreeNodeType Type; // the type of the node
-	// The index of the feature which is used for splitting
-	// This value makes sense only for nodes with DTNT_Discrete and DTNT_Continuous types
-	int FeatureIndex;
-	// The values which are used for node splitting (valid only for DTNT_Discrete and DTNT_Continuous)
-	// For DTNT_Discrete, if the feature value is found in the Values array the child node with the corresponding index is selected;
-	// otherwise, the class is determined using the Probabilities field
-	CArray<double> Values;
-	// The probabilities for the object to belong to each of the classes
-	// This field makes sense only for DTNT_Discrete and DTNT_Const
-	// For DTNT_Const, this field is used to classify the input
-	// For DTNT_Discrete, this field is used to classify the input if the feature value has not been found in Values
-	CArray<CClassificationProbability> Probabilities;
-
-	CDecisionTreeNodeInfo() : Type( DTNT_Undefined ), FeatureIndex( NotFound ) {}
-
-	// Copies the contents to another object
-	void CopyTo( CDecisionTreeNodeInfo& newInfo ) const;
-};
-
-inline void CDecisionTreeNodeInfo::CopyTo( CDecisionTreeNodeInfo& newInfo ) const
+namespace NeoML
 {
-	newInfo.Type = Type;
-	newInfo.FeatureIndex = FeatureIndex;
-	Values.CopyTo( newInfo.Values );
-	Probabilities.CopyTo( newInfo.Probabilities );
-}
 
-inline CArchive& operator<<( CArchive& archive, const CDecisionTreeNodeInfo& info )
-{
-	archive.SerializeEnum( const_cast<CDecisionTreeNodeInfo&>( info ).Type );
-	archive << info.FeatureIndex;
-	archive << info.Values;
-	archive << info.Probabilities;
-	return archive;
-}
+	class CDecisionTreeNodeBase;
+	class CDecisionTreeNodeStatisticBase;
 
-inline CArchive& operator>>( CArchive& archive, CDecisionTreeNodeInfo& info )
-{
-	archive.SerializeEnum( info.Type );
-	archive >> info.FeatureIndex;
-	archive >> info.Values;
-	archive >> info.Probabilities;
-	return archive;
-}
-
-//------------------------------------------------------------------------------------------------------------
-
-DECLARE_NEOML_MODEL_NAME( DecisionTreeModelName, "FmlDecisionTreeClassificationModel" )
-
-// Classification model interface
-class NEOML_API IDecisionTreeModel : public IModel {
-public:
-	~IDecisionTreeModel() override;
-
-	// Gets the number of child nodes
-	virtual int GetChildrenCount() const = 0;
-
-	// Gets the child node with the specified index
-	virtual CPtr<IDecisionTreeModel> GetChild( int index ) const = 0;
-
-	// Gets the node information
-	virtual void GetNodeInfo( CDecisionTreeNodeInfo& info ) const = 0;
-};
-
-//------------------------------------------------------------------------------------------------------------
-
-// Decision tree training algorithm
-class NEOML_API CDecisionTree : public ITrainingModel {
-public:
-	// The type of criterion to be used for subtree splitting
-	enum TSplitCriterion {
-		SC_GiniImpurity = 0,
-		SC_InformationGain,
-		SC_Count
+	// The node types for a decision tree
+	enum TDecisionTreeNodeType
+	{
+		DTNT_Undefined = 0,
+		DTNT_Const = 1,		// a constant node
+		DTNT_Discrete = 3,	// a node that uses a discrete feature for splitting
+		DTNT_Continuous = 4 // a node that uses a continuous feature for splitting
 	};
 
-	// Classification parameters
-	struct CParams {
-		// The minimum number of vectors corresponding to a node subtree:
-		int MinContinuousSubsetSize; // when splitting by a continuous feature value
-		int MinDiscreteSubsetSize; // when splitting by a discrete feature value
-		// The minimum weight of the vectors in a subtree relative to the parent node weight (may be from 0 to 1):
-		double MinDiscreteSubsetPart; // when splitting by a discrete feature value
-		double MinContinuousSubsetPart; // when splitting by a continuous feature value
-		// The minimum number of vectors in a node subtree when it may be divided further
-		int MinSplitSize;
-		int MaxTreeDepth; // the maximum depth of the tree
-		// The maximum number of nodes in the tree
-		int MaxNodesCount;
-		// The type of split criterion to be used for splitting nodes
-		TSplitCriterion SplitCriterion;
-		// If the ratio of same class elements in the subset is greater than this value, a constant node will be created
-		// May be from 0 to 1
-		double ConstNodeThreshold;
-		// No more than this number of randomly selected features will be used for each node
-		// Set the value to `-1` to use all features every time
-		int RandomSelectedFeaturesCount;
-		// The memory limit for the algorithm
-		size_t AvailableMemory; 
-		// The algorithm used for multi-class classification
-		TMulticlassMode MulticlassMode;
+	// The information about a decision tree node
+	struct CDecisionTreeNodeInfo
+	{
+		TDecisionTreeNodeType Type; // the type of the node
+		// The index of the feature which is used for splitting
+		// This value makes sense only for nodes with DTNT_Discrete and DTNT_Continuous types
+		int FeatureIndex;
+		// The values which are used for node splitting (valid only for DTNT_Discrete and DTNT_Continuous)
+		// For DTNT_Discrete, if the feature value is found in the Values array the child node with the corresponding index is selected;
+		// otherwise, the class is determined using the Probabilities field
+		CArray<double> Values;
+		// The probabilities for the object to belong to each of the classes
+		// This field makes sense only for DTNT_Discrete and DTNT_Const
+		// For DTNT_Const, this field is used to classify the input
+		// For DTNT_Discrete, this field is used to classify the input if the feature value has not been found in Values
+		CArray<CClassificationProbability> Probabilities;
 
-		CParams() :
-			MinContinuousSubsetSize( 1 ),
-			MinDiscreteSubsetSize( 1 ),
-			MinDiscreteSubsetPart( 0 ),
-			MinContinuousSubsetPart( 0 ),
-			MinSplitSize( 1 ),
-			MaxTreeDepth( 32 ),
-			MaxNodesCount( 4096 ),
-			SplitCriterion( SC_InformationGain ),
-			ConstNodeThreshold( 0.99 ),
-			RandomSelectedFeaturesCount( NotFound ),
-			AvailableMemory( Gigabyte ),
-			MulticlassMode( MM_SingleClassifier )
+		CDecisionTreeNodeInfo() : Type(DTNT_Undefined), FeatureIndex(NotFound) {}
+
+		// Copies the contents to another object
+		void CopyTo(CDecisionTreeNodeInfo &newInfo) const;
+	};
+
+	inline void CDecisionTreeNodeInfo::CopyTo(CDecisionTreeNodeInfo &newInfo) const
+	{
+		newInfo.Type = Type;
+		newInfo.FeatureIndex = FeatureIndex;
+		Values.CopyTo(newInfo.Values);
+		Probabilities.CopyTo(newInfo.Probabilities);
+	}
+
+	inline CArchive &operator<<(CArchive &archive, const CDecisionTreeNodeInfo &info)
+	{
+		archive.SerializeEnum(const_cast<CDecisionTreeNodeInfo &>(info).Type);
+		archive << info.FeatureIndex;
+		archive << info.Values;
+		archive << info.Probabilities;
+		return archive;
+	}
+
+	inline CArchive &operator>>(CArchive &archive, CDecisionTreeNodeInfo &info)
+	{
+		archive.SerializeEnum(info.Type);
+		archive >> info.FeatureIndex;
+		archive >> info.Values;
+		archive >> info.Probabilities;
+		return archive;
+	}
+
+	//------------------------------------------------------------------------------------------------------------
+
+	DECLARE_NEOML_MODEL_NAME(DecisionTreeModelName, "FmlDecisionTreeClassificationModel")
+
+	// Classification model interface
+	class NEOML_API IDecisionTreeModel : public IModel
+	{
+	public:
+		~IDecisionTreeModel() override;
+
+		// Gets the number of child nodes
+		virtual int GetChildrenCount() const = 0;
+
+		// Gets the child node with the specified index
+		virtual CPtr<IDecisionTreeModel> GetChild(int index) const = 0;
+
+		// Gets the node information
+		virtual void GetNodeInfo(CDecisionTreeNodeInfo &info) const = 0;
+	};
+
+	//------------------------------------------------------------------------------------------------------------
+
+	// Decision tree training algorithm
+	class NEOML_API CDecisionTree : public ITrainingModel
+	{
+	public:
+		// The type of criterion to be used for subtree splitting
+		enum TSplitCriterion
 		{
-		}
+			SC_GiniImpurity = 0,
+			SC_InformationGain,
+			SC_Count
+		};
+
+		// Classification parameters
+		struct CParams
+		{
+			// The minimum number of vectors corresponding to a node subtree:
+			int MinContinuousSubsetSize; // when splitting by a continuous feature value
+			int MinDiscreteSubsetSize;	 // when splitting by a discrete feature value
+			// The minimum weight of the vectors in a subtree relative to the parent node weight (may be from 0 to 1):
+			double MinDiscreteSubsetPart;	// when splitting by a discrete feature value
+			double MinContinuousSubsetPart; // when splitting by a continuous feature value
+			// The minimum number of vectors in a node subtree when it may be divided further
+			int MinSplitSize;
+			int MaxTreeDepth; // the maximum depth of the tree
+			// The maximum number of nodes in the tree
+			int MaxNodesCount;
+			// The type of split criterion to be used for splitting nodes
+			TSplitCriterion SplitCriterion;
+			// If the ratio of same class elements in the subset is greater than this value, a constant node will be created
+			// May be from 0 to 1
+			double ConstNodeThreshold;
+			// No more than this number of randomly selected features will be used for each node
+			// Set the value to `-1` to use all features every time
+			int RandomSelectedFeaturesCount;
+			// The memory limit for the algorithm
+			size_t AvailableMemory;
+			// The algorithm used for multi-class classification
+			TMulticlassMode MulticlassMode;
+
+			CParams() : MinContinuousSubsetSize(1),
+						MinDiscreteSubsetSize(1),
+						MinDiscreteSubsetPart(0),
+						MinContinuousSubsetPart(0),
+						MinSplitSize(1),
+						MaxTreeDepth(32),
+						MaxNodesCount(4096),
+						SplitCriterion(SC_InformationGain),
+						ConstNodeThreshold(0.99),
+						RandomSelectedFeaturesCount(NotFound),
+						AvailableMemory(Gigabyte),
+						MulticlassMode(MM_SingleClassifier)
+			{
+			}
+		};
+
+		// All features will be used
+		explicit CDecisionTree(const CParams &params, CRandom *random = 0);
+		~CDecisionTree() override;
+
+		// Set a text stream to log the progress
+		void SetLog(CTextStream *newLog) { logStream = newLog; }
+
+		// The ITrainingModel interface methods:
+		CPtr<IModel> Train(const IProblem &problem) override;
+
+	private:
+		static const int MaxClassifyNodesCacheSize = 10 * Megabyte;			   // the cache size for leaf nodes
+		CParams params;														   // the classification parameters
+		CRandom defRandom;													   // the default random numbers generator
+		CRandom &random;													   // the actual random numbers generator
+		CTextStream *logStream;												   // the logging stream
+		CPtr<const IProblem> classificationProblem;							   // the current input data as an IProblem interface
+		mutable int nodesCount;												   // the number of tree nodes
+		mutable int statisticsCacheSize;									   // the cache size for statistics
+		mutable CPointerArray<CDecisionTreeNodeStatisticBase> statisticsCache; // the cache for statistics
+		mutable CArray<CDecisionTreeNodeBase *> classifyNodesCache;			   // the cache for leaf nodes
+		mutable CArray<int> classifyNodesLevel;								   // the levels of leaf nodes
+
+		CPtr<CDecisionTreeNodeBase> buildTree(int vectorCount);
+		bool buildTreeLevel(const CFloatMatrixDesc &matrix, int level, CDecisionTreeNodeBase &root) const;
+		bool collectStatistics(const CFloatMatrixDesc &matrix, int level, CDecisionTreeNodeBase *root) const;
+		bool split(const CDecisionTreeNodeStatisticBase &nodeStatistics, int level) const;
+		void generateUsedFeatures(int randomSelectedFeaturesCount, int featuresCount, CArray<int> &features) const;
+
+		CPtr<CDecisionTreeNodeBase> createNode() const;
+		CDecisionTreeNodeStatisticBase *createStatistic(CDecisionTreeNodeBase *node) const;
 	};
 
-	// All features will be used
-	explicit CDecisionTree( const CParams& params, CRandom* random = 0 );
-	~CDecisionTree() override;
-
-	// Set a text stream to log the progress
-	void SetLog( CTextStream* newLog ) { logStream = newLog; }
-
-	// The ITrainingModel interface methods:
-	CPtr<IModel> Train( const IProblem& problem ) override;
-
-private:
-	static const int MaxClassifyNodesCacheSize = 10 * Megabyte; // the cache size for leaf nodes
-	CParams params; // the classification parameters
-	CRandom defRandom; // the default random numbers generator
-	CRandom& random; // the actual random numbers generator
-	CTextStream* logStream; // the logging stream
-	CPtr<const IProblem> classificationProblem; // the current input data as an IProblem interface
-	mutable int nodesCount; // the number of tree nodes
-	mutable int statisticsCacheSize; // the cache size for statistics
-	mutable CPointerArray<CDecisionTreeNodeStatisticBase> statisticsCache; // the cache for statistics
-	mutable CArray<CDecisionTreeNodeBase*> classifyNodesCache; // the cache for leaf nodes
-	mutable CArray<int> classifyNodesLevel; // the levels of leaf nodes
-
-	CPtr<CDecisionTreeNodeBase> buildTree( int vectorCount );
-	bool buildTreeLevel( const CFloatMatrixDesc& matrix, int level, CDecisionTreeNodeBase& root ) const;
-	bool collectStatistics( const CFloatMatrixDesc& matrix, int level, CDecisionTreeNodeBase* root ) const;
-	bool split( const CDecisionTreeNodeStatisticBase& nodeStatistics, int level ) const;
-	void generateUsedFeatures( int randomSelectedFeaturesCount, int featuresCount, CArray<int>& features ) const;
-
-	CPtr<CDecisionTreeNodeBase> createNode() const;
-	CDecisionTreeNodeStatisticBase* createStatistic( CDecisionTreeNodeBase* node ) const;
-};
-
-// DEPRECATED: for backward compatibility
-typedef CDecisionTree CDecisionTreeTrainingModel;
+	// DEPRECATED: for backward compatibility
+	typedef CDecisionTree CDecisionTreeTrainingModel;
 
 } // namespace NeoML
+
+// Export C Methods
+
+using namespace NeoML;
+
+#define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
+
+EXTERN_DLL_EXPORT void *CDecisionTreeInit(
+	int MinContinuousSubsetSize,
+	int MinDiscreteSubsetSize,
+	double MinDiscreteSubsetPart,
+	double MinContinuousSubsetPart,
+	int MinSplitSize,
+	int MaxTreeDepth,
+	int MaxNodesCount,
+	int SplitCriterion,
+	double ConstNodeThreshold,
+	int RandomSelectedFeaturesCount,
+	size_t AvailableMemory,
+	int MulticlassMode,
+	void* ptrCRandom = 0
+);
+
+// EXTERN_DLL_EXPORT void *CDecisionTreeInitEmpty();
+
+// EXTERN_DLL_EXPORT void CDecisionTreeReset(void *ptr, unsigned int seed);
+
+// EXTERN_DLL_EXPORT unsigned int CDecisionTreeNext(void *ptr);
+
+// EXTERN_DLL_EXPORT double CDecisionTreeUniform(void *ptr, double min, double max);
+
+// EXTERN_DLL_EXPORT int CDecisionTreeUniformInt(void *ptr, int min, int max);
+
+// EXTERN_DLL_EXPORT double CDecisionTreeNormal(void *ptr, double mean, double sigma);

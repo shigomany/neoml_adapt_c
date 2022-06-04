@@ -345,3 +345,73 @@ CDecisionTreeNodeStatisticBase* CDecisionTree::createStatistic( CDecisionTreeNod
 }
 
 } // namespace NeoML
+
+// Implementation C Interface
+
+using namespace NeoML;
+
+void* CDecisionTreeInit(int MinContinuousSubsetSize,
+	int MinDiscreteSubsetSize,
+	double MinDiscreteSubsetPart,
+	double MinContinuousSubsetPart,
+	int MinSplitSize,
+	int MaxTreeDepth,
+	int MaxNodesCount,
+	int SplitCriterion,
+	double ConstNodeThreshold,
+	int RandomSelectedFeaturesCount,
+	size_t AvailableMemory,
+	int MulticlassMode,
+	void* ptrCRandom
+	)
+{
+	CDecisionTree::CParams param;
+	param.MinContinuousSubsetSize = MinContinuousSubsetSize;
+	param.MinDiscreteSubsetSize = MinDiscreteSubsetSize;
+	param.MinDiscreteSubsetPart = MinDiscreteSubsetPart;
+	param.MinContinuousSubsetPart = MinContinuousSubsetPart;
+	param.MinSplitSize = MinSplitSize;
+	param.MaxTreeDepth = MaxTreeDepth;
+	param.MaxNodesCount = MaxNodesCount;
+	param.SplitCriterion = static_cast<CDecisionTree::TSplitCriterion>(SplitCriterion);
+	param.ConstNodeThreshold = ConstNodeThreshold;
+	param.RandomSelectedFeaturesCount = RandomSelectedFeaturesCount;
+	param.AvailableMemory = AvailableMemory;
+	param.MulticlassMode = static_cast<TMulticlassMode>(MulticlassMode);
+
+	auto random = static_cast<CRandom*>(ptrCRandom);
+
+	return new CDecisionTree(param, random);
+}
+
+// void* CDecisionTreeInitEmpty()
+// {
+// 	return new CDecisionTree();
+// }
+
+// void CDecisionTreeReset(void* ptr, unsigned int seed)
+// {
+// 	auto instance = static_cast<CDecisionTree *>(ptr);
+// 	return instance->Reset(seed);
+// }
+
+// unsigned int CDecisionTreeNext(void* ptr)
+// {
+// 	auto instance = static_cast<CDecisionTree *>(ptr);
+// 	return instance->Next();
+// }
+
+// double CDecisionTreeUniform(void* ptr, double min, double max) {
+// 	auto instance = static_cast<CDecisionTree *>(ptr);
+// 	return instance->Uniform(min, max);
+// }
+
+// int CDecisionTreeUniformInt(void* ptr, int min, int max) {
+// 	auto instance = static_cast<CDecisionTree *>(ptr);
+// 	return instance->UniformInt(min, max);
+// }
+
+// double CDecisionTreeNormal(void* ptr, double mean, double sigma) {
+// 	auto instance = static_cast<CRandom *>(ptr);
+// 	return instance->Normal(mean, sigma);
+// }
