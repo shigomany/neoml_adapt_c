@@ -317,3 +317,91 @@ CSparseFloatVector CFloatVector::SparseVector() const
 }
 
 } // namespace NeoML
+
+// Implementation C Interface
+
+using namespace NeoML;
+using namespace std;
+
+// --- Contructors --- //
+
+void *CFloatVectorFromSparseVector(int size, void* ptrSparseVector) {
+	auto sparseVector = reinterpret_cast<CSparseFloatVector&>(ptrSparseVector);
+
+	return new CFloatVector(size, sparseVector);
+}
+
+void *CFloatVectorFromVectorDesc(int size, const CFloatVectorDesc &floatVectorDesc) {
+	return new CFloatVector(size, floatVectorDesc);
+}
+
+void *CFloatVectorInit(int size, float init) {
+	return new CFloatVector(size, init);
+}
+
+// --- Contructors --- //
+
+// --- Functions --- //
+
+bool CFloatVectorIsNull(void *ptr) {
+	auto instance = static_cast<CFloatVector*>(ptr);
+	return instance->IsNull();
+}
+
+int CFloatVectorSize(void *ptr) {
+	auto instance = static_cast<CFloatVector*>(ptr);
+	return instance->Size();
+}
+
+double CFloatVectorNorm(void *ptr) {
+	auto instance = static_cast<CFloatVector*>(ptr);
+	return instance->Norm();
+}
+
+double CFloatVectorNormL1(void *ptr) {
+	auto instance = static_cast<CFloatVector*>(ptr);
+	return instance->NormL1();
+}
+
+float CFloatVectorMaxAbs(void *ptr) {
+	auto instance = static_cast<CFloatVector*>(ptr);
+	return instance->MaxAbs();
+}
+
+float CFloatVectorGetValue(void *ptr, int index) {
+	auto instance = static_cast<CFloatVector*>(ptr);
+	return instance->operator[](index);
+}
+
+void CFloatVectorSetValue(void *ptr, int index, float value) {
+	auto instance = static_cast<CFloatVector*>(ptr);
+	return instance->SetAt(index, value);
+}
+
+float *CFloatVectorCopyOnWrite(void *ptr) {
+	auto instance = static_cast<CFloatVector*>(ptr);
+	return instance->CopyOnWrite();
+}
+
+const CFloatVectorDesc &CFloatVectorGetDesc(void *ptr) {
+	auto instance = static_cast<CFloatVector*>(ptr);
+	return instance->GetDesc();
+}
+
+void CFloatVectorNullify(void *ptr) {
+	auto instance = static_cast<CFloatVector*>(ptr);
+	return instance->Nullify();
+}
+
+const float *CFloatVectorGetPtr(void *ptr) {
+	auto instance = static_cast<CFloatVector*>(ptr);
+	return instance->GetPtr();
+}
+
+void *CFloatVectorSparseVector(void *ptr) {
+	auto instance = static_cast<CFloatVector*>(ptr);
+	auto vector = instance->SparseVector();
+	return &vector;
+}
+
+// --- Functions --- //

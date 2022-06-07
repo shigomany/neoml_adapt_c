@@ -227,3 +227,23 @@ void CalcSigmoidCoefficients( const CCrossValidationResult& crossValidationResul
 }
 
 } // namespace NeoML
+
+// Implementation C Interface
+
+using namespace NeoML;
+
+struct CSigmoid CSigmoidInit(double a, double b) {
+	struct CSigmoid result;
+	result.A = a;
+	result.B = b;
+
+	return result;
+}
+
+bool CSigmoidIsValid(const CSigmoid& ptr) {
+	return ptr.IsValid();
+}
+
+double CSigmoidDistanceToProbability(const CSigmoid& ptr, double distance) {
+	return ptr.DistanceToProbability(distance);
+}

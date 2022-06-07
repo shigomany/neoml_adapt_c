@@ -17,62 +17,114 @@ limitations under the License.
 
 #include <NeoML/TraditionalML/Problem.h>
 
-namespace NeoML {
+namespace NeoML
+{
 
-// An IProblem implementation that stores all data in memory
-class NEOML_API CMemoryProblem : public IProblem {
-public:
-	// Creates memory problem where each vector has featureCount elements,
-	// and each vector belongs to the one of the classCount classes.
-	// If rowsBufferSize and elementBufferSize are greater than zero
-	// and the total number of vectors is not greater than rowsBufferSize
-	// and the total number of non-zero elements across all vectors is not greater than elementsBufferSize
-	// then it's guaranteed that there will be no additional allocations during the CMemoryProblem::Add calls.
-	CMemoryProblem( int featureCount, int classCount, int rowsBufferSize = 0, int elementsBufferSize = 0 );
-	CMemoryProblem(); // used for loading serialized problems
+	// An IProblem implementation that stores all data in memory
+	class NEOML_API CMemoryProblem : public IProblem
+	{
+	public:
+		// Creates memory problem where each vector has featureCount elements,
+		// and each vector belongs to the one of the classCount classes.
+		// If rowsBufferSize and elementBufferSize are greater than zero
+		// and the total number of vectors is not greater than rowsBufferSize
+		// and the total number of non-zero elements across all vectors is not greater than elementsBufferSize
+		// then it's guaranteed that there will be no additional allocations during the CMemoryProblem::Add calls.
+		CMemoryProblem(int featureCount, int classCount, int rowsBufferSize = 0, int elementsBufferSize = 0);
+		CMemoryProblem(); // used for loading serialized problems
 
-	// Adds a vector to the set
-	void Add( const CFloatVectorDesc& vector, double weight, int classNumber );
-	void Add( const CSparseFloatVector& vector, double weight, int classNumber );
-	void Add( const CFloatVectorDesc& vector, int classNumber ) { Add( vector, 1.0, classNumber ); }
-	void Add( const CSparseFloatVector& vector, int classNumber ) { Add( vector, 1.0, classNumber ); }
+		// Adds a vector to the set
+		void Add(const CFloatVectorDesc &vector, double weight, int classNumber);
+		void Add(const CSparseFloatVector &vector, double weight, int classNumber);
+		void Add(const CFloatVectorDesc &vector, int classNumber) { Add(vector, 1.0, classNumber); }
+		void Add(const CSparseFloatVector &vector, int classNumber) { Add(vector, 1.0, classNumber); }
 
-	// Gets a vector from the set
-	CFloatVectorDesc GetVector( int index ) const { return matrix.GetRow( index ); }
+		// Gets a vector from the set
+		CFloatVectorDesc GetVector(int index) const { return matrix.GetRow(index); }
 
-	// Sets the feature type
-	void SetFeatureType( int index, bool isDiscrete ) { isDiscreteFeature[index] = isDiscrete; }
-	void SetDiscretizationValue( int index, int value );
+		// Sets the feature type
+		void SetFeatureType(int index, bool isDiscrete) { isDiscreteFeature[index] = isDiscrete; }
+		void SetDiscretizationValue(int index, int value);
 
-	// Sets the vector weight
-	void SetVectorWeight( int index, float weight );
-	// Sets the vector class
-	void SetClass( int index, int newClass );
+		// Sets the vector weight
+		void SetVectorWeight(int index, float weight);
+		// Sets the vector class
+		void SetClass(int index, int newClass);
 
-	// IProblem interface methods:
-	int GetClassCount() const override { return classCount; }
-	int GetFeatureCount() const override { return featureCount; }
-	bool IsDiscreteFeature( int index ) const override { return isDiscreteFeature[index]; }
-	int GetVectorCount() const override { return matrix.GetHeight(); }
-	int GetClass( int index ) const override { return classes[index]; }
-	CFloatMatrixDesc GetMatrix() const override { return matrix.GetDesc(); }
-	double GetVectorWeight( int index ) const override { return weights[index]; };
-	int GetDiscretizationValue( int index ) const override { return discretizationValues[index]; }
+		// IProblem interface methods:
+		int GetClassCount() const override { return classCount; }
+		int GetFeatureCount() const override { return featureCount; }
+		bool IsDiscreteFeature(int index) const override { return isDiscreteFeature[index]; }
+		int GetVectorCount() const override { return matrix.GetHeight(); }
+		int GetClass(int index) const override { return classes[index]; }
+		CFloatMatrixDesc GetMatrix() const override { return matrix.GetDesc(); }
+		double GetVectorWeight(int index) const override { return weights[index]; };
+		int GetDiscretizationValue(int index) const override { return discretizationValues[index]; }
 
-	// IObject
-	void Serialize( CArchive& archive ) override;
+		// IObject
+		void Serialize(CArchive &archive) override;
 
-protected:
-	~CMemoryProblem() override = default; // delete operation prohibited
+	protected:
+		~CMemoryProblem() override = default; // delete operation prohibited
 
-private:
-	CSparseFloatMatrix matrix; // all vectors of the set
-	CArray<int> classes; // the correct class labels for all the vectors
-	CArray<float> weights; // the vector weights
-	int classCount; // the number of classes
-	int featureCount; // the number of features
-	CArray<bool> isDiscreteFeature; // indicates if the feature is discrete or continuous
-	CArray<int> discretizationValues; // feature sampling values
-};
+	private:
+		CSparseFloatMatrix matrix;		  // all vectors of the set
+		CArray<int> classes;			  // the correct class labels for all the vectors
+		CArray<float> weights;			  // the vector weights
+		int classCount;					  // the number of classes
+		int featureCount;				  // the number of features
+		CArray<bool> isDiscreteFeature;	  // indicates if the feature is discrete or continuous
+		CArray<int> discretizationValues; // feature sampling values
+	};
 
 } // namespace NeoML
+
+// Export C Methods
+
+using namespace NeoML;
+
+#define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
+
+// --- Contructors --- //
+
+EXTERN_DLL_EXPORT void *CMemoryProblemInitEmpty();
+
+EXTERN_DLL_EXPORT void *CMemoryProblemInit(int featureCount, int classCount, int rowsBufferSize = 0, int elementsBufferSize = 0);
+
+// --- Contructors --- //
+
+// --- Functions --- //
+
+EXTERN_DLL_EXPORT void CMemoryProblemAddFloatDesc(void *ptr, const CFloatVectorDesc &vector, double weight, int classNumber);
+
+EXTERN_DLL_EXPORT void CMemoryProblemAddSparseFloatVector(void *ptr, const CSparseFloatVector &vector, double weight, int classNumber);
+
+EXTERN_DLL_EXPORT CFloatVectorDesc CMemoryProblemGetVector(void *ptr, int index);
+
+EXTERN_DLL_EXPORT void CMemoryProblemSetFeatureType(void *ptr, int index, bool isDiscrete);
+
+EXTERN_DLL_EXPORT void CMemoryProblemSetDiscretizationValue(void *ptr, int index, int value);
+
+EXTERN_DLL_EXPORT void CMemoryProblemSetVectorWeight(void *ptr, int index, float weight);
+
+EXTERN_DLL_EXPORT void CMemoryProblemSetClass(void *ptr, int index, int newClass);
+
+EXTERN_DLL_EXPORT int CMemoryProblemGetClassCount(void *ptr);
+
+EXTERN_DLL_EXPORT int CMemoryProblemGetFeatureCount(void *ptr);
+
+EXTERN_DLL_EXPORT bool CMemoryProblemIsDiscreteFeature(void *ptr, int index);
+
+EXTERN_DLL_EXPORT int CMemoryProblemGetVectorCount(void *ptr);
+
+EXTERN_DLL_EXPORT int CMemoryProblemGetClass(void *ptr, int index);
+
+EXTERN_DLL_EXPORT CFloatMatrixDesc CMemoryProblemGetMatrix(void *ptr);
+
+EXTERN_DLL_EXPORT double CMemoryProblemGetVectorWeight(void *ptr, int index);
+
+EXTERN_DLL_EXPORT int CMemoryProblemGetDiscretizationValue(void *ptr, int index);
+
+EXTERN_DLL_EXPORT double CMemoryProblemGetBinaryClass(void *ptr, int index);
+
+// --- Functions --- //

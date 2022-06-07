@@ -347,3 +347,96 @@ CSparseFloatMatrix::CSparseFloatMatrixBody* CSparseFloatMatrix::copyOnWriteAndGr
 }
 
 } // namespace NeoML
+
+// Implementation C Interface
+
+using namespace NeoML;
+
+struct CFloatMatrixDesc CFloatMatrixDescInit(
+	int Height,
+	int Width,
+	int* Columns,
+	float* Values,
+	int* PointerB,
+	int* PointerE) {
+		CFloatMatrixDesc matrix;
+		matrix.Height = Height;
+		matrix.Width = Width;
+		matrix.Columns = Columns;
+		matrix.Values = Values;
+		matrix.PointerB = PointerB;
+		matrix.PointerE = PointerE;
+
+		return matrix;
+	}
+
+struct CFloatVectorDesc CFloatMatrixDescGetRow(
+	struct CFloatMatrixDesc& matrix, int index) {
+		return matrix.GetRow(index);
+	}
+
+// --- Contructors --- //
+
+void *CSparseFloatMatrixInitEmpty() {
+	return new CSparseFloatMatrix();
+}
+
+void *CSparseFloatMatrixInit(int width, int rowsBufferSize, int elementsBufferSize) {
+	return new CSparseFloatMatrix(width, rowsBufferSize, elementsBufferSize);
+}
+
+void *CSparseFloatMatrixInitDesc(const CFloatMatrixDesc &desc) {
+	return new CSparseFloatMatrix(desc);
+}
+
+// --- Contructors --- //
+
+// --- Functions --- //
+
+CFloatMatrixDesc *CSparseFloatMatrixCopyOnWrite(void* ptr) {
+	auto instance = static_cast<CSparseFloatMatrix*>(ptr);
+	return instance->CopyOnWrite();
+}
+
+const CFloatMatrixDesc &CSparseFloatMatrixGetDesc(void* ptr) {
+	auto instance = static_cast<CSparseFloatMatrix*>(ptr);
+	return instance->GetDesc();
+}
+
+int CSparseFloatMatrixGetHeight(void* ptr) {
+	auto instance = static_cast<CSparseFloatMatrix*>(ptr);
+	return instance->GetHeight();
+}
+
+int CSparseFloatMatrixGetWidth(void* ptr) {
+	auto instance = static_cast<CSparseFloatMatrix*>(ptr);
+	return instance->GetWidth();
+}
+
+void CSparseFloatMatrixGrowInRows(void* ptr, int newRowsBufferSize) {
+	auto instance = static_cast<CSparseFloatMatrix*>(ptr);
+	return instance->GrowInRows(newRowsBufferSize);
+}
+
+void CSparseFloatMatrixGrowInElements(void* ptr, int newElementsBufferSize) {
+	auto instance = static_cast<CSparseFloatMatrix*>(ptr);
+	return instance->GrowInElements(newElementsBufferSize);
+}
+
+void CSparseFloatMatrixAddRowVector(void* ptr, void *ptrVector) {
+	auto instance = static_cast<CSparseFloatMatrix*>(ptr);
+	auto vector = static_cast<CSparseFloatVector*>(ptrVector);
+	return instance->AddRow(*vector);
+}
+
+void CSparseFloatMatrixAddRowDesc(void* ptr, const CFloatVectorDesc &row) {
+	auto instance = static_cast<CSparseFloatMatrix*>(ptr);
+	return instance->AddRow(row);
+}
+
+CFloatVectorDesc CSparseFloatMatrixGetRow(void* ptr, int index) {
+	auto instance = static_cast<CSparseFloatMatrix*>(ptr);
+	return instance->GetRow(index);
+}
+
+// --- Functions --- //

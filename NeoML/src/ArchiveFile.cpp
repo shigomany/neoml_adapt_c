@@ -391,3 +391,8 @@ void CArchiveFileWrite(void *ptr, void *buffer, int bytesCount) {
 	auto instance = static_cast<CArchiveFile*>(ptr);
 	return instance->Write(buffer, bytesCount);
 }
+
+void CArchiveFileClose(void* ptr) {
+	auto instance = static_cast<CArchiveFile*>(ptr);
+	return instance->Close();
+}

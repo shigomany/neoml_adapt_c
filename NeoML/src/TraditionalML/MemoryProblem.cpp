@@ -130,3 +130,103 @@ void CMemoryProblem::Serialize( CArchive& archive )
 }
 
 } // namespace NeoML
+
+// Implementation C Interface
+
+using namespace NeoML;
+
+// --- Contructors --- //
+
+void *CMemoryProblemInitEmpty() {
+	return new CMemoryProblem();
+}
+
+void *CMemoryProblemInit(int featureCount, int classCount, int rowsBufferSize, int elementsBufferSize) {
+	return new CMemoryProblem(featureCount, classCount, rowsBufferSize, elementsBufferSize);
+}
+
+// --- Contructors --- //
+
+// --- Functions --- //
+
+void CMemoryProblemAddFloatDesc(void *ptr, const CFloatVectorDesc &vector, double weight, int classNumber) {
+	auto instance = static_cast<CMemoryProblem*>(ptr);
+	return instance->Add(vector, weight, classNumber);
+}
+
+void CMemoryProblemAddSparseFloatVector(void *ptr, const CSparseFloatVector &vector, double weight, int classNumber) {
+	auto instance = static_cast<CMemoryProblem*>(ptr);
+	return instance->Add(vector, weight, classNumber);
+}
+
+CFloatVectorDesc CMemoryProblemGetVector(void *ptr, int index) {
+	auto instance = static_cast<CMemoryProblem*>(ptr);
+	return instance->GetVector(index);
+}
+
+void CMemoryProblemSetFeatureType(void *ptr, int index, bool isDiscrete) {
+	auto instance = static_cast<CMemoryProblem*>(ptr);
+	return instance->SetFeatureType(index, isDiscrete);
+}
+
+void CMemoryProblemSetDiscretizationValue(void *ptr, int index, int value) {
+	auto instance = static_cast<CMemoryProblem*>(ptr);
+	return instance->SetDiscretizationValue(index, value);
+}
+
+void CMemoryProblemSetVectorWeight(void *ptr, int index, float weight) {
+	auto instance = static_cast<CMemoryProblem*>(ptr);
+	return instance->SetVectorWeight(index, weight);
+}
+
+void CMemoryProblemSetClass(void *ptr, int index, int newClass) {
+	auto instance = static_cast<CMemoryProblem*>(ptr);
+	return instance->SetClass(index, newClass);
+}
+
+int CMemoryProblemGetClassCount(void *ptr) {
+	auto instance = static_cast<CMemoryProblem*>(ptr);
+	return instance->GetClassCount();
+}
+
+int CMemoryProblemGetFeatureCount(void *ptr) {
+	auto instance = static_cast<CMemoryProblem*>(ptr);
+	return instance->GetFeatureCount();
+}
+
+bool CMemoryProblemIsDiscreteFeature(void *ptr, int index) {
+	auto instance = static_cast<CMemoryProblem*>(ptr);
+	return instance->IsDiscreteFeature(index);
+}
+
+int CMemoryProblemGetVectorCount(void *ptr) {
+	auto instance = static_cast<CMemoryProblem*>(ptr);
+	return instance->GetVectorCount();
+}
+
+int CMemoryProblemGetClass(void *ptr, int index) {
+	auto instance = static_cast<CMemoryProblem*>(ptr);
+	return instance->GetVectorCount();
+}
+
+CFloatMatrixDesc CMemoryProblemGetMatrix(void *ptr) {
+	auto instance = static_cast<CMemoryProblem*>(ptr);
+	return instance->GetMatrix();
+}
+
+double CMemoryProblemGetVectorWeight(void *ptr, int index) {
+	auto instance = static_cast<CMemoryProblem*>(ptr);
+	return instance->GetVectorWeight(index);
+}
+
+int CMemoryProblemGetDiscretizationValue(void *ptr, int index) {
+	auto instance = static_cast<CMemoryProblem*>(ptr);
+	return instance->GetDiscretizationValue(index);
+}
+
+double CMemoryProblemGetBinaryClass(void *ptr, int index) {
+	auto instance = static_cast<CMemoryProblem*>(ptr);
+	return instance->GetBinaryClass(index);
+}
+
+// --- Functions --- //

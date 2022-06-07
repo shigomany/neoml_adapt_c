@@ -89,3 +89,5 @@ EXTERN_DLL_EXPORT const char* CArchiveFileGetFileName(void* ptr);
 EXTERN_DLL_EXPORT int CArchiveFileRead(void* ptr, void* buffer, int bytesCount);
 
 EXTERN_DLL_EXPORT void CArchiveFileWrite(void* ptr, void* buffer, int bytesCount);
+
+EXTERN_DLL_EXPORT void CArchiveFileClose(void* ptr);

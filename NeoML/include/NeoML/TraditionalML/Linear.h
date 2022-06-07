@@ -117,3 +117,33 @@ private:
 typedef CLinear CLinearBinaryClassifierBuilder;
 
 } // namespace NeoML
+
+// Export C Methods
+
+using namespace NeoML;
+
+#define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
+
+// --- Contructors --- //
+
+EXTERN_DLL_EXPORT void *CLinearInit(
+	int errorFunction, 
+	int multiclassMode,
+	const CSigmoid& coefficients,
+	int errorWeight = 1, 
+	int maxIterations = 1000,
+	double tolerance = -1,
+	bool normalizeError = false,
+	float l1Coeff = 0.f,
+	int threadCount = 1
+);
+
+// --- Contructors --- //
+
+// --- Functions --- //
+
+EXTERN_DLL_EXPORT void* CLinearTrain(void* ptr, void* ptrIProblem);
+
+EXTERN_DLL_EXPORT void* CLinearTrainRegression(void* ptr, void* ptrIProblem);
+
+// --- Functions --- //

@@ -18,20 +18,23 @@ limitations under the License.
 #include <NeoML/NeoMLDefs.h>
 #include <NeoML/TraditionalML/ClassificationProbability.h>
 
-namespace NeoML {
+namespace NeoML
+{
 
-// Classification result
-struct NEOML_API CClassificationResult {
-	int PreferredClass;									// the number of the class to which the input object is assigned
-	CClassificationProbability ExceptionProbability;	// the probability that the input object fits none of the classes
-	CArray<CClassificationProbability> Probabilities;	// the array of probabilities for the object to belong to each of the classes
+	// Classification result
+	struct NEOML_API CClassificationResult
+	{
+		int PreferredClass;								  // the number of the class to which the input object is assigned
+		CClassificationProbability ExceptionProbability;  // the probability that the input object fits none of the classes
+		CArray<CClassificationProbability> Probabilities; // the array of probabilities for the object to belong to each of the classes
 
-	CClassificationResult() : PreferredClass( 0 ), ExceptionProbability( 0 ) {}
-	CClassificationResult( const CClassificationResult& other ) {
-		PreferredClass = other.PreferredClass;
-		ExceptionProbability = other.ExceptionProbability;
-		other.Probabilities.CopyTo( Probabilities );
-	}
-};
+		CClassificationResult() : PreferredClass(0), ExceptionProbability(0) {}
+		CClassificationResult(const CClassificationResult &other)
+		{
+			PreferredClass = other.PreferredClass;
+			ExceptionProbability = other.ExceptionProbability;
+			other.Probabilities.CopyTo(Probabilities);
+		}
+	};
 
 } // namespace NeoML

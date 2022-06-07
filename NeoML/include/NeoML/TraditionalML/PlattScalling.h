@@ -73,3 +73,16 @@ void NEOML_API CalcSigmoidCoefficients( const CCrossValidationResult& crossValid
 	CSigmoid& coefficients );
 
 } // namespace NeoML
+
+// Export C Methods
+
+using namespace NeoML;
+
+#define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
+
+EXTERN_DLL_EXPORT struct CSigmoid CSigmoidInit(double a, double b);
+
+EXTERN_DLL_EXPORT bool CSigmoidIsValid(const CSigmoid& ptr);
+
+EXTERN_DLL_EXPORT double CSigmoidDistanceToProbability(const CSigmoid& ptr, double distance);
+

@@ -643,3 +643,140 @@ void CSparseFloatVector::Serialize( CArchive& archive )
 }
 
 } // namespace NeoML
+
+// Implementation C Interface
+
+using namespace NeoML;
+
+struct CFloatVectorDesc CFloatVectorDescInit(
+	int Size,
+	int* Indexes,
+	float* Values) {
+		CFloatVectorDesc cFloatVector;
+		cFloatVector.Indexes = Indexes;
+		cFloatVector.Size = Size;
+		cFloatVector.Values = Values;
+
+		return cFloatVector;
+	}
+
+// --- Contructors --- //
+
+void *CSparseFloatVectorInitEmpty(){
+	return new CSparseFloatVector();
+}
+
+void *CSparseFloatVectorInitBufferSize(int bufferSize) {
+	return new CSparseFloatVector(bufferSize);
+}
+
+void *CSparseFloatVectorInitFloatVector(const CFloatVectorDesc &other) {
+	return new CSparseFloatVector(other);
+}
+
+// --- Contructors --- //
+
+// --- Functions --- //
+
+CFloatVectorDesc *CSparseFloatVectorCopyOnWrite(void *ptr) {
+	auto instance = static_cast<CSparseFloatVector*>(ptr);
+	return instance->CopyOnWrite();
+}
+
+const CFloatVectorDesc &CSparseFloatVectorGetDesc(void *ptr) {
+	auto instance = static_cast<CSparseFloatVector*>(ptr);
+	return instance->GetDesc();
+}
+
+int CSparseFloatVectorNumberOfElements(void *ptr) {
+	auto instance = static_cast<CSparseFloatVector*>(ptr);
+	return instance->NumberOfElements();
+}
+
+double CSparseFloatVectorNorm(void *ptr) {
+	auto instance = static_cast<CSparseFloatVector*>(ptr);
+	return instance->Norm();
+}
+
+double CSparseFloatVectorNormL1(void *ptr) {
+	auto instance = static_cast<CSparseFloatVector*>(ptr);
+	return instance->NormL1();
+}
+
+float CSparseFloatVectorMaxAbs(void *ptr) {
+	auto instance = static_cast<CSparseFloatVector*>(ptr);
+	return instance->MaxAbs();
+}
+
+void CSparseFloatVectorSetAt(void *ptr, int index, float value) {
+	auto instance = static_cast<CSparseFloatVector*>(ptr);
+	return instance->SetAt(index, value);
+}
+
+float CSparseFloatVectorGetValue(void *ptr, int index) {
+	auto instance = static_cast<CSparseFloatVector*>(ptr);
+	return instance->GetValue(index);
+}
+
+void CSparseFloatVectorNullify(void *ptr) {
+	auto instance = static_cast<CSparseFloatVector*>(ptr);
+	return instance->Nullify();
+}
+
+// --- Functions --- //
+
+// --- Operations --- //
+
+void* CSparseFloatVectorOpEqual(void *ptr, void* otherPtr) {
+	auto instance = static_cast<CSparseFloatVector*>(ptr);
+	auto otherInstance = static_cast<CSparseFloatVector*>(otherPtr);
+	*instance = *otherInstance;
+
+	return instance;
+}
+
+void* CSparseFloatVectorOpPlusEqualSparse(void *ptr, void* otherPtr) {
+	auto instance = static_cast<CSparseFloatVector*>(ptr);
+	auto otherInstance = static_cast<CSparseFloatVector*>(otherPtr);
+	*instance += *otherInstance;
+
+	return instance;
+}
+
+void* CSparseFloatVectorOpMinusEqualSparse(void *ptr, void* otherPtr) {
+	auto instance = static_cast<CSparseFloatVector*>(ptr);
+	auto otherInstance = static_cast<CSparseFloatVector*>(otherPtr);
+	*instance -= *otherInstance;
+
+	return instance;
+}
+
+void* CSparseFloatVectorOpPlusEqualDesc(void *ptr, const CFloatVectorDesc &other) {
+	auto instance = static_cast<CSparseFloatVector*>(ptr);
+	*instance += other;
+
+	return instance;
+}
+
+void* CSparseFloatVectorOpMinusEqualDesc(void *ptr, const CFloatVectorDesc &other) {
+	auto instance = static_cast<CSparseFloatVector*>(ptr);
+	*instance -= other;
+
+	return instance;
+}
+
+void* CSparseFloatVectorOpMulEqual(void *ptr, double factor) {
+	auto instance = static_cast<CSparseFloatVector*>(ptr);
+	*instance *= factor;
+
+	return instance;
+}
+
+void* CSparseFloatVectorOpDivEqual(void *ptr, double factor) {
+	auto instance = static_cast<CSparseFloatVector*>(ptr);
+	*instance /= factor;
+
+	return instance;
+}
+
+// --- Operations --- //

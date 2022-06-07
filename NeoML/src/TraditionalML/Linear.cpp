@@ -171,3 +171,53 @@ CPtr<IModel> CLinear::Train( const IProblem& trainingClassificationData )
 }
 
 } // namespace NeoML
+
+// Implementation C Interface
+
+using namespace NeoML;
+
+// --- Contructors --- //
+
+void *CLinearInit(
+	int errorFunction, 
+	int multiclassMode,
+	int errorWeight, 
+	int maxIterations,
+	const CSigmoid& coefficients,
+	double tolerance,
+	bool normalizeError,
+	float l1Coeff,
+	int threadCount
+) {
+	CLinear::CParams param(
+		static_cast<TErrorFunction>(errorFunction),
+		errorWeight,
+		maxIterations,
+		coefficients,
+		tolerance,
+		normalizeError,
+		l1Coeff,
+		threadCount,
+		static_cast<TMulticlassMode>(multiclassMode)
+	);
+	
+	return new CLinear(param);
+}
+
+// --- Contructors --- //
+
+// --- Functions --- //
+
+void* CLinearTrain(void* ptr, void* ptrIProblem) {
+	auto linear = static_cast<CLinear*>(ptr);
+	auto problem = static_cast<IProblem*>(ptrIProblem);
+	return linear->Train(*problem);
+}
+
+void* CLinearTrainRegression(void* ptr, void* ptrIProblem) {
+	auto linear = static_cast<CLinear*>(ptr);
+	auto problem = static_cast<IRegressionProblem*>(ptrIProblem);
+	return linear->TrainRegression(*problem);
+}
+
+// --- Functions --- //
