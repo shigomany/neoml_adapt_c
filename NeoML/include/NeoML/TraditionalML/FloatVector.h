@@ -488,7 +488,7 @@ EXTERN_DLL_EXPORT void CFloatVectorSetValue(void *ptr, int index, float value);
 
 EXTERN_DLL_EXPORT float *CFloatVectorCopyOnWrite(void *ptr);
 
-EXTERN_DLL_EXPORT const CFloatVectorDesc &CFloatVectorGetDesc(void *ptr);
+EXTERN_DLL_EXPORT struct CFloatVectorDesc CFloatVectorGetDesc(void *ptr);
 
 EXTERN_DLL_EXPORT void CFloatVectorNullify(void *ptr);
 

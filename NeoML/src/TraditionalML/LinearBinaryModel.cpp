@@ -76,3 +76,50 @@ double CLinearBinaryModel::Predict( const CFloatVectorDesc& data ) const
 }
 
 } // namespace NeoML
+
+// Implementation C Interface
+
+using namespace NeoML;
+
+// --- Contructors --- //
+
+void *CLinearBinaryModelInit(void *ptrPlane, const CSigmoid &sigmoidCoefficients) {
+	auto plane = static_cast<CFloatVector*>(ptrPlane);
+	return new CLinearBinaryModel(*plane, sigmoidCoefficients);
+}
+
+// --- Contructors --- //
+
+// --- Functions --- //
+
+int CLinearBinaryModelGetClassCount(void *ptr) {
+	auto instance = static_cast<CLinearBinaryModel*>(ptr);
+	return instance->GetClassCount();
+}
+
+void* CLinearBinaryModelClassify(void *ptr, const CFloatVectorDesc& desc) {
+	CFloatVectorDesc ss = static_cast<CFloatVectorDesc>(desc);
+	auto instance = static_cast<CLinearBinaryModel*>(ptr);
+	auto result = new CClassificationResult();
+	instance->Classify(desc, *result);
+
+	return result;
+}
+
+const void *CLinearBinaryModelGetPlane(void *ptr) {
+	auto instance = static_cast<CLinearBinaryModel*>(ptr);
+	auto plane = instance->GetPlane();
+	return new CFloatVector(plane);
+}
+
+struct CSigmoid CLinearBinaryModelGetSigmoid(void *ptr) {
+	auto instance = static_cast<CLinearBinaryModel*>(ptr);
+	return static_cast<CSigmoid>(instance->GetSigmoid());
+}
+
+double CLinearBinaryModelPredict(void *ptr, const CFloatVectorDesc &data) {
+	auto instance = static_cast<CLinearBinaryModel*>(ptr);
+	return instance->Predict(data);
+}
+
+// --- Functions --- //

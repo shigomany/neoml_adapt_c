@@ -178,12 +178,12 @@ using namespace NeoML;
 
 // --- Contructors --- //
 
-void *CLinearInit(
-	int errorFunction, 
+void* CLinearInit(
+	int errorFunction,
 	int multiclassMode,
-	int errorWeight, 
+	struct CSigmoid coefficients,
+	int errorWeight,
 	int maxIterations,
-	const CSigmoid& coefficients,
 	double tolerance,
 	bool normalizeError,
 	float l1Coeff,
@@ -208,16 +208,16 @@ void *CLinearInit(
 
 // --- Functions --- //
 
-void* CLinearTrain(void* ptr, void* ptrIProblem) {
-	auto linear = static_cast<CLinear*>(ptr);
-	auto problem = static_cast<IProblem*>(ptrIProblem);
-	return linear->Train(*problem);
-}
-
 void* CLinearTrainRegression(void* ptr, void* ptrIProblem) {
 	auto linear = static_cast<CLinear*>(ptr);
 	auto problem = static_cast<IRegressionProblem*>(ptrIProblem);
-	return linear->TrainRegression(*problem);
+	return linear->TrainRegression(*problem).Ptr();
+}
+
+void* CLinearTrainClassification(void* ptr, void* ptrIProblem) {
+	auto linear = static_cast<CLinear*>(ptr);
+	auto problem = static_cast<IProblem*>(ptrIProblem);
+	return linear->Train(*problem).Ptr();
 }
 
 // --- Functions --- //

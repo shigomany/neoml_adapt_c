@@ -186,3 +186,25 @@ inline CClassificationProbability CClassificationProbability::make( double value
 }
 
 } // namespace NeoML
+
+// Export C Methods
+
+using namespace NeoML;
+
+#define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
+
+// --- Contructors --- //
+
+EXTERN_DLL_EXPORT void *CClassificationProbabilityInit(double value);
+
+// --- Contructors --- //
+
+// --- Functions --- //
+
+EXTERN_DLL_EXPORT double CClassificationProbabilityGetValue(void *ptr);
+
+EXTERN_DLL_EXPORT void CClassificationProbabilitySetValue(void *ptr, double value);
+
+EXTERN_DLL_EXPORT bool CClassificationProbabilityIsValid(void *ptr);
+
+// --- Functions --- //

@@ -321,12 +321,11 @@ CSparseFloatVector CFloatVector::SparseVector() const
 // Implementation C Interface
 
 using namespace NeoML;
-using namespace std;
 
 // --- Contructors --- //
 
 void *CFloatVectorFromSparseVector(int size, void* ptrSparseVector) {
-	auto sparseVector = reinterpret_cast<CSparseFloatVector&>(ptrSparseVector);
+	CSparseFloatVector sparseVector = reinterpret_cast<CSparseFloatVector&>(ptrSparseVector);
 
 	return new CFloatVector(size, sparseVector);
 }
@@ -383,7 +382,7 @@ float *CFloatVectorCopyOnWrite(void *ptr) {
 	return instance->CopyOnWrite();
 }
 
-const CFloatVectorDesc &CFloatVectorGetDesc(void *ptr) {
+struct CFloatVectorDesc CFloatVectorGetDesc(void *ptr) {
 	auto instance = static_cast<CFloatVector*>(ptr);
 	return instance->GetDesc();
 }

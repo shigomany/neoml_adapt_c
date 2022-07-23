@@ -26,9 +26,10 @@ namespace NeoML
 	{
 		int PreferredClass;								  // the number of the class to which the input object is assigned
 		CClassificationProbability ExceptionProbability;  // the probability that the input object fits none of the classes
-		CArray<CClassificationProbability> Probabilities; // the array of probabilities for the object to belong to each of the classes
+		CArray<CClassificationProbability> Probabilities; // the array of probabilities for the object to belong to each of the 
 
 		CClassificationResult() : PreferredClass(0), ExceptionProbability(0) {}
+
 		CClassificationResult(const CClassificationResult &other)
 		{
 			PreferredClass = other.PreferredClass;
@@ -38,3 +39,40 @@ namespace NeoML
 	};
 
 } // namespace NeoML
+
+// Export C Methods
+
+using namespace NeoML;
+// using namespace std;
+#define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
+
+// --- Functions --- //
+
+EXTERN_DLL_EXPORT inline double *CClassificationResultGetProbabilities(void* ptr) {
+	auto instance = static_cast<CClassificationResult*>(ptr);
+
+	double* outputProbs = new double[instance->Probabilities.Size()];
+
+	for (int i = 0; i < instance->Probabilities.Size(); i++) {
+		outputProbs[i] = instance->Probabilities[i].GetValue();
+	}
+
+	return outputProbs;
+}
+
+EXTERN_DLL_EXPORT inline int CClassificationResultProbabilitiesSize(void* ptr) {
+	auto instance = static_cast<CClassificationResult*>(ptr);
+	return instance->Probabilities.Size();
+}
+
+EXTERN_DLL_EXPORT inline int CClassificationResultGetPreferredClass(void* ptr) {
+	auto instance = static_cast<CClassificationResult*>(ptr);
+	return instance->PreferredClass;
+}
+
+EXTERN_DLL_EXPORT inline double CClassificationResultGetExceptionProbability(void* ptr) {
+	auto instance = static_cast<CClassificationResult*>(ptr);
+	return instance->ExceptionProbability.GetValue();
+}
+
+// --- Functions --- //

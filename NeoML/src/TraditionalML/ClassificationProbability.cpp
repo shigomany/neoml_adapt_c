@@ -37,3 +37,34 @@ const CClassificationProbability& CClassificationProbability::MaxProbability()
 }
 
 } // namespace NeoML
+
+// Implementation C Interface
+
+using namespace NeoML;
+
+// --- Contructors --- //
+
+void *CClassificationProbabilityInit(double value) {
+	return new CClassificationProbability(value);
+}
+
+// --- Contructors --- //
+
+// --- Functions --- //
+
+double CClassificationProbabilityGetValue(void *ptr) {
+	auto instance = static_cast<CClassificationProbability*>(ptr);
+	return instance->GetValue();
+}
+
+void CClassificationProbabilitySetValue(void *ptr, double value) {
+	auto instance = static_cast<CClassificationProbability*>(ptr);
+	return instance->SetValue(value);
+}
+
+bool CClassificationProbabilityIsValid(void *ptr) {
+	auto instance = static_cast<CClassificationProbability*>(ptr);
+	return instance->IsValid();
+}
+
+// --- Functions --- //

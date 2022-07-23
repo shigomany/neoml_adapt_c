@@ -17,37 +17,65 @@ limitations under the License.
 
 #include <NeoML/TraditionalML/Linear.h>
 
-namespace NeoML {
+namespace NeoML
+{
 
-// The linear binary classifier
-class CLinearBinaryModel : public ILinearBinaryModel, public ILinearRegressionModel {
-public:
-	CLinearBinaryModel() = default;
-	CLinearBinaryModel( const CFloatVector& plane, const CSigmoid& sigmoidCoefficients );
+	// The linear binary classifier
+	class CLinearBinaryModel : public ILinearBinaryModel, public ILinearRegressionModel
+	{
+	public:
+		CLinearBinaryModel() = default;
+		CLinearBinaryModel(const CFloatVector &plane, const CSigmoid &sigmoidCoefficients);
 
-	// For serialization
-	static CPtr<IModel> Create() { return FINE_DEBUG_NEW CLinearBinaryModel(); }
+		// For serialization
+		static CPtr<IModel> Create() { return FINE_DEBUG_NEW CLinearBinaryModel(); }
 
-	// IModel interface methods
-	int GetClassCount() const override { return 2; }
-	bool Classify( const CFloatVectorDesc& data, CClassificationResult& result ) const override;
-	void Serialize( CArchive& archive ) override;
+		// IModel interface methods
+		int GetClassCount() const override { return 2; }
+		bool Classify(const CFloatVectorDesc &data, CClassificationResult &result) const override;
+		void Serialize(CArchive &archive) override;
 
-	// ILinearBinaryModel interface methods
-	CFloatVector GetPlane() const override { return plane; }
-	const CSigmoid& GetSigmoid() const override { return coefficients; }
+		// ILinearBinaryModel interface methods
+		CFloatVector GetPlane() const override { return plane; }
+		const CSigmoid &GetSigmoid() const override { return coefficients; }
 
-	// IRegressionModel interface method
-	double Predict( const CFloatVectorDesc& data ) const override;
+		// IRegressionModel interface method
+		double Predict(const CFloatVectorDesc &data) const override;
 
-protected:
-	~CLinearBinaryModel() override = default; // delete prohibited
+	protected:
+		~CLinearBinaryModel() override = default; // delete prohibited
 
-private:
-	CFloatVector plane; // the base plane
-	CSigmoid coefficients; // sigmoid coefficients for estimating probability
+	private:
+		CFloatVector plane;	   // the base plane
+		CSigmoid coefficients; // sigmoid coefficients for estimating probability
 
-	bool classify( double distance, CClassificationResult& result ) const;
-};
+		bool classify(double distance, CClassificationResult &result) const;
+	};
 
 } // namespace NeoML
+
+// Export C Methods
+
+using namespace NeoML;
+
+#define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
+
+// --- Contructors --- //
+
+EXTERN_DLL_EXPORT void *CLinearBinaryModelInit(void *ptrPlane, const CSigmoid &sigmoidCoefficients);
+
+// --- Contructors --- //
+
+// --- Functions --- //
+
+EXTERN_DLL_EXPORT int CLinearBinaryModelGetClassCount(void *ptr);
+
+EXTERN_DLL_EXPORT void* CLinearBinaryModelClassify(void *ptr, const CFloatVectorDesc& desc);
+
+EXTERN_DLL_EXPORT const void* CLinearBinaryModelGetPlane(void *ptr);
+
+EXTERN_DLL_EXPORT struct CSigmoid CLinearBinaryModelGetSigmoid(void *ptr);
+
+EXTERN_DLL_EXPORT double CLinearBinaryModelPredict(void *ptr, const CFloatVectorDesc &data);
+
+// --- Functions --- //

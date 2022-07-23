@@ -129,7 +129,7 @@ using namespace NeoML;
 EXTERN_DLL_EXPORT void *CLinearInit(
 	int errorFunction, 
 	int multiclassMode,
-	const CSigmoid& coefficients,
+	struct CSigmoid coefficients,
 	int errorWeight = 1, 
 	int maxIterations = 1000,
 	double tolerance = -1,
@@ -142,8 +142,8 @@ EXTERN_DLL_EXPORT void *CLinearInit(
 
 // --- Functions --- //
 
-EXTERN_DLL_EXPORT void* CLinearTrain(void* ptr, void* ptrIProblem);
-
 EXTERN_DLL_EXPORT void* CLinearTrainRegression(void* ptr, void* ptrIProblem);
+
+EXTERN_DLL_EXPORT void* CLinearTrainClassification(void* ptr, void* ptrIProblem);
 
 // --- Functions --- //
