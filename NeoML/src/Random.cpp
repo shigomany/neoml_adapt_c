@@ -223,10 +223,6 @@ namespace NeoML
 
 using namespace NeoML;
 
-int summer(int a, int b) {
-	return a + b;
-}
-
 void* CRandomInit(unsigned int seed)
 {
 	return new CRandom(seed);

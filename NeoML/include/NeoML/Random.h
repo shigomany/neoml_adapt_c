@@ -90,8 +90,6 @@ namespace NeoML
 #define EXTERN_API_EXPORT extern "C" __attribute__((visibility("default"))) __attribute__((used))
 #endif
 
-EXTERN_API_EXPORT int summer(int a, int b);
-
 EXTERN_API_EXPORT void *CRandomInit(unsigned int seed);
 
 EXTERN_API_EXPORT void *CRandomInitEmpty();
