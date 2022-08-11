@@ -1,4 +1,4 @@
-/* Copyright © 2017-2021 ABBYY Production LLC
+/* Copyright Â© 2017-2021 ABBYY Production LLC
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -205,7 +205,7 @@ void InitializePCA(py::module& m)
 		{
 			py::gil_scoped_release release;
 			if( isFullAlgorithm ) {
-				SingularValueDecomposition( desc, SVD_Full, leftVectors, singularValues, rightVectors,
+				SingularValueDecomposition( desc, leftVectors, singularValues, rightVectors,
 					returnLeftVectors, returnRightVectors, components );
 			} else {
 				RandomizedSingularValueDecomposition( desc, leftVectors, singularValues, rightVectors,

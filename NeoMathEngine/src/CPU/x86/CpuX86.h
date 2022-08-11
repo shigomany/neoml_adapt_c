@@ -30,6 +30,7 @@ limitations under the License.
 #include <tmmintrin.h>
 #include <cmath>
 #include <cfloat>
+#include <cassert>
 
 #include <NeoMathEngine/CrtAllocatedObject.h>
 
@@ -67,26 +68,14 @@ inline __m128 LoadSse4(const float* data)
 
 inline __m128 LoadSse(const float* data, int count, float defVal = 0)
 {
+	assert( count >= 1 && count <= 3 );
 	switch(count) {
-		default:
-		case 0:
-			return _mm_setzero_ps();
 		case 1:
 			return _mm_set_ps(defVal, defVal, defVal, data[0]);
 		case 2:
 			return _mm_set_ps(defVal, defVal, data[1], data[0]);
-		case 3:
-			return _mm_set_ps(defVal, data[2], data[1], data[0]);
 	}
-}
-
-inline __m128 LoadSseFromVector(const float* data, int count, float defVal = 0)
-{
-	if(count >= 4) {
-		return LoadSse4(data);
-	} else {
-		return LoadSse(data, count, defVal);
-	}
+	return _mm_set_ps(defVal, data[2], data[1], data[0]);
 }
 
 inline __m128i LoadIntSse4(const int* data)
@@ -96,17 +85,14 @@ inline __m128i LoadIntSse4(const int* data)
 
 inline __m128i LoadIntSse(const int* data, int count, int defVal = 0)
 {
+	assert( count >= 1 && count <= 3 );
 	switch(count) {
-		default:
-		case 0:
-			return _mm_setzero_si128();
 		case 1:
 			return _mm_set_epi32(defVal, defVal, defVal, data[0]);
 		case 2:
 			return _mm_set_epi32(defVal, defVal, data[1], data[0]);
-		case 3:
-			return _mm_set_epi32(defVal, data[2], data[1], data[0]);
 	}
+	return _mm_set_epi32(defVal, data[2], data[1], data[0]);
 }
 
 inline void StoreSse4(const __m128&val, float* data)
@@ -166,6 +152,30 @@ inline void StoreIntSse(__m128i val, int* data, int count)
 			break;
 	}
 }
+
+#define SSE_LOAD_16_FLOATS(varPrefix, src) \
+    __m128 varPrefix##0 = LoadSse4(src + 4 * 0); \
+    __m128 varPrefix##1 = LoadSse4(src + 4 * 1); \
+    __m128 varPrefix##2 = LoadSse4(src + 4 * 2); \
+    __m128 varPrefix##3 = LoadSse4(src + 4 * 3);
+
+#define SSE_STORE_16_FLOATS(varPrefix, dst) \
+    StoreSse4(varPrefix##0, dst + 4 * 0); \
+    StoreSse4(varPrefix##1, dst + 4 * 1); \
+    StoreSse4(varPrefix##2, dst + 4 * 2); \
+    StoreSse4(varPrefix##3, dst + 4 * 3);
+
+#define SSE_LOAD_16_INTS(varPrefix, src) \
+    __m128i varPrefix##0 = LoadIntSse4(src + 4 * 0); \
+    __m128i varPrefix##1 = LoadIntSse4(src + 4 * 1); \
+    __m128i varPrefix##2 = LoadIntSse4(src + 4 * 2); \
+    __m128i varPrefix##3 = LoadIntSse4(src + 4 * 3);
+
+#define SSE_STORE_16_INTS(varPrefix, dst) \
+    StoreIntSse4(varPrefix##0, dst + 4 * 0); \
+    StoreIntSse4(varPrefix##1, dst + 4 * 1); \
+    StoreIntSse4(varPrefix##2, dst + 4 * 2); \
+    StoreIntSse4(varPrefix##3, dst + 4 * 3);
 
 inline __m128 GetPhaseMask4(int phase)
 {
@@ -355,17 +365,16 @@ inline void dataCopy(float* dst, const float* src, int vectorSize)
 		src += 4;
 	}
 
-#if FINE_PLATFORM(FINE_WINDOWS)
-	if( nonSseSize > 0 ) {
-		__movsd((DWORD*)dst, (DWORD*)src, nonSseSize);
+	switch( nonSseSize ) {
+		case 3:
+			dst[2] = src[2];
+			// fall through
+		case 2:
+			dst[1] = src[1];
+			// fall through
+		case 1:
+			dst[0] = src[0];
 	}
-#elif FINE_PLATFORM(FINE_LINUX) || FINE_PLATFORM(FINE_DARWIN) || FINE_PLATFORM(FINE_ANDROID) || FINE_PLATFORM(FINE_IOS)
-	for(int i = 0; i < nonSseSize; ++i) {
-		*dst++ = *src++;
-	}
-#else
-	#error "Platform isn't supported!"
-#endif
 }
 
 inline void dataCopy(int* dst, const int* src, int vectorSize)
@@ -397,17 +406,16 @@ inline void dataCopy(int* dst, const int* src, int vectorSize)
 		src += 4;
 	}
 
-#if FINE_PLATFORM(FINE_WINDOWS)
-	if(nonSseSize > 0) {
-		__movsd((unsigned long*)dst, (const unsigned long*)src, nonSseSize);
+	switch( nonSseSize ) {
+		case 3:
+			dst[2] = src[2];
+			// fall through
+		case 2:
+			dst[1] = src[1];
+			// fall through
+		case 1:
+			dst[0] = src[0];
 	}
-#elif FINE_PLATFORM(FINE_LINUX) || FINE_PLATFORM(FINE_DARWIN) || FINE_PLATFORM(FINE_ANDROID) || FINE_PLATFORM(FINE_IOS)
-	for(int i = 0; i < nonSseSize; ++i) {
-		*dst++ = *src++;
-	}
-#else
-	#error "Platform isn't supported!"
-#endif
 }
 
 inline float euclidianNoSSE( const float* x, const float* y, const int size )

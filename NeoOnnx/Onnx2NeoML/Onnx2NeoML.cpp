@@ -24,13 +24,13 @@ using namespace NeoML;
 
 int ConvertOnnx2NeoML( const char* inputOnnxFilename, const char* outputDnnArchiveFileName )
 {
-    CArray<const char*> inputs;
-    CArray<const char*> outputs;
     IMathEngine& mathEng = GetDefaultCpuMathEngine();
     CRandom random( 0x123 );
     CDnn net( random, mathEng );
     try {
-        NeoOnnx::LoadFromOnnx( inputOnnxFilename, net, inputs, outputs );
+        NeoOnnx::CImportSettings importSettings;
+        NeoOnnx::CImportedModelInfo modelInfo;
+        NeoOnnx::LoadFromOnnx( inputOnnxFilename, importSettings, net, modelInfo );
         {
             CArchiveFile file( outputDnnArchiveFileName, CArchive::store );
             CArchive archive( &file, CArchive::SD_Storing );

@@ -9,7 +9,8 @@ endif()
 add_library(NeoML::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 set_target_properties( ${PROJECT_NAME} PROPERTIES
-    UNITY_BUILD_MODE GROUP
+    UNITY_BUILD_MODE BATCH
+    UNITY_BUILD_BATCH_SIZE ${NeoML_UNITY_BUILD_BATCH_SIZE}
 )
 
 target_sources( ${PROJECT_NAME} PRIVATE
@@ -31,9 +32,9 @@ target_sources( ${PROJECT_NAME} PRIVATE
     Operators/ConstantOperator.cpp
     Operators/ConvOperator.cpp
     Operators/ConvTransposeOperator.cpp
+    Operators/CumSumOperator.cpp
     Operators/DropoutOperator.cpp
     Operators/EltwiseOperator.cpp
-    Operators/EqualOperator.cpp
     Operators/ExpandOperator.cpp
     Operators/FlattenOperator.cpp
     Operators/GatherOperator.cpp
@@ -41,6 +42,7 @@ target_sources( ${PROJECT_NAME} PRIVATE
     Operators/GlobalPoolOperator.cpp
     Operators/IdentityOperator.cpp
     Operators/InstanceNormalizationOperator.cpp
+    Operators/LogicalOperator.cpp
     Operators/LrnOperator.cpp
     Operators/LstmOperator.cpp
     Operators/MatMulOperator.cpp
@@ -51,6 +53,7 @@ target_sources( ${PROJECT_NAME} PRIVATE
     Operators/RangeOperator.cpp
     Operators/ResizeOperator.cpp
     Operators/ReshapeOperator.cpp
+    Operators/ScatterOperator.cpp
     Operators/ShapeOperator.cpp
     Operators/SliceOperator.cpp
     Operators/SoftmaxOperator.cpp
@@ -59,7 +62,6 @@ target_sources( ${PROJECT_NAME} PRIVATE
     Operators/TransposeOperator.cpp
     Operators/UnsqueezeOperator.cpp
     Operators/UpsampleOperator.cpp
-    Operators/WhereOperator.cpp
     TensorUtils.cpp
 
     ../include/NeoOnnx/NeoOnnx.h
@@ -82,9 +84,9 @@ target_sources( ${PROJECT_NAME} PRIVATE
     Operators/ConstantOperator.h
     Operators/ConvOperator.h
     Operators/ConvTransposeOperator.h
+    Operators/CumSumOperator.h
     Operators/DropoutOperator.h
     Operators/EltwiseOperator.h
-    Operators/EqualOperator.h
     Operators/ExpandOperator.h
     Operators/FlattenOperator.h
     Operators/GatherOperator.h
@@ -92,6 +94,7 @@ target_sources( ${PROJECT_NAME} PRIVATE
     Operators/GlobalPoolOperator.h
     Operators/IdentityOperator.h
     Operators/InstanceNormalizationOperator.h
+    Operators/LogicalOperator.h
     Operators/LrnOperator.h
     Operators/LstmOperator.h
     Operators/MatMulOperator.h
@@ -102,6 +105,7 @@ target_sources( ${PROJECT_NAME} PRIVATE
     Operators/RangeOperator.h
     Operators/ReshapeOperator.h
     Operators/ResizeOperator.h
+    Operators/ScatterOperator.h
     Operators/ShapeOperator.h
     Operators/SliceOperator.h
     Operators/SoftmaxOperator.h
@@ -110,7 +114,6 @@ target_sources( ${PROJECT_NAME} PRIVATE
     Operators/TransposeOperator.h
     Operators/UnsqueezeOperator.h
     Operators/UpsampleOperator.h
-    Operators/WhereOperator.h
     Tensor.h
     TensorLayout.h
     TensorUtils.h
@@ -128,41 +131,51 @@ if(DEFINED ENV{Protobuf_ROOT} AND (IOS OR ANDROID))
     list(APPEND CMAKE_FIND_ROOT_PATH $ENV{Protobuf_ROOT})
 endif()
 
+if(${CMAKE_VERSION} VERSION_GREATER "3.16.0")
+    set(CMAKE_UNITY_BUILD OFF)
+endif()
+
+set(protobuf_BUILD_TESTS OFF CACHE BOOL "")
+set(protobuf_MSVC_STATIC_RUNTIME "${STATIC_NEOML}" CACHE BOOL "")
+set(protobuf_WITH_ZLIB OFF CACHE BOOL "")
+set(protobuf_BUILD_PROTOC_BINARIES ON CACHE BOOL "")
+set(protobuf_BUILD_SHARED_LIBS OFF CACHE BOOL "")
+
 if(USE_FINE_OBJECTS)
-    if(NOT WIN32 AND NOT LINUX)
-        message(FATAL_ERROR "NeoOnnx works with FineObj only on Windows or Linux")
-    endif()
-
-    if(${CMAKE_VERSION} VERSION_GREATER "3.16.0")
-        set(CMAKE_UNITY_BUILD OFF)
-    endif()
-
-    set(protobuf_BUILD_TESTS OFF CACHE BOOL "")
-    set(protobuf_MSVC_STATIC_RUNTIME "${STATIC_NEOML}" CACHE BOOL "")
-    set(protobuf_WITH_ZLIB OFF CACHE BOOL "")
-    set(protobuf_BUILD_PROTOC_BINARIES ON CACHE BOOL "")
-    set(protobuf_BUILD_SHARED_LIBS OFF CACHE BOOL "")
     add_subdirectory("${FINE_ROOT}/ThirdParty/protobuf/cmake"
         "${CMAKE_BINARY_DIR}/protobuf" EXCLUDE_FROM_ALL)
-    if(LINUX)
-        target_compile_options(libprotobuf PRIVATE -Wno-stringop-overflow)
-        target_compile_options(libprotobuf-lite PRIVATE -Wno-stringop-overflow)
-    endif()
+else()
+    include(FetchContent)
+    FetchContent_Declare(
+        protobuf
+        GIT_REPOSITORY https://github.com/protocolbuffers/protobuf.git
+        GIT_TAG v3.11.4
+    )
 
-    if(${CMAKE_VERSION} VERSION_GREATER "3.16.0")
-        set(CMAKE_UNITY_BUILD ${NeoML_UNITY_BUILD})
-    endif()
+    FetchContent_GetProperties(protobuf)
 
+    if(NOT protobuf_POPULATED)
+        FetchContent_Populate(protobuf)
+        add_subdirectory(${protobuf_SOURCE_DIR}/cmake ${protobuf_BINARY_DIR} EXCLUDE_FROM_ALL)    
+    endif()
+endif()
+
+if(LINUX)
+    target_compile_options(libprotobuf PRIVATE -Wno-stringop-overflow)
+    target_compile_options(libprotobuf-lite PRIVATE -Wno-stringop-overflow)
+endif()
+
+if(${CMAKE_VERSION} VERSION_GREATER "3.16.0")
+    set(CMAKE_UNITY_BUILD ${NeoML_UNITY_BUILD})
+endif()
+
+if(USE_FINE_OBJECTS)
     target_link_libraries(${PROJECT_NAME} PRIVATE FineObjects)
 
     # Todo: properly link FineStlStaticPart if any problems occure
     if(MSVC)
         target_link_libraries(${PROJECT_NAME} PRIVATE "msvcprt$<$<CONFIG:Debug>:d>")
     endif()
-else()
-    set(Protobuf_USE_STATIC_LIBS ON)
-
-    find_package(Protobuf REQUIRED)
 endif()
 
 set(PROTO_DIR ${CMAKE_CURRENT_BINARY_DIR}/cpp_proto/${CMAKE_CFG_INTDIR})
@@ -181,6 +194,7 @@ add_custom_command(
 )
 
 target_sources(${PROJECT_NAME} PRIVATE ${PROTO_HDRS} ${PROTO_SRCS})
+set_property(SOURCE ${PROTO_HDRS} ${PROTO_SRCS} PROPERTY SKIP_UNITY_BUILD_INCLUSION ON)
 
 if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /W2)
@@ -210,8 +224,8 @@ endif()
 
 if(NeoOnnx_BUILD_SHARED AND NOT WIN32)
     set(EXPORT_SYMBOLS
-        _ZN7NeoOnnx12LoadFromOnnxEPKviRN5NeoML4CDnnERN4FObj6CArrayIPKcNS5_20CurrentMemoryManagerEEESB_
-        _ZN7NeoOnnx12LoadFromOnnxEPKcRN5NeoML4CDnnERN4FObj6CArrayIS1_NS5_20CurrentMemoryManagerEEES9_)
+        _ZN7NeoOnnx12LoadFromOnnxEPKcRKNS_15CImportSettingsERN5NeoML4CDnnERNS_18CImportedModelInfoE
+        _ZN7NeoOnnx12LoadFromOnnxEPKviRKNS_15CImportSettingsERN5NeoML4CDnnERNS_18CImportedModelInfoE)
     if(LINUX OR ANDROID)
         set(EXPORT_SYMBOLS_STR "${EXPORT_SYMBOLS};")
         configure_file(../NeoOnnx.version.in NeoOnnx.version)
@@ -254,8 +268,4 @@ if(WIN32)
     
     enable_language(RC)
     target_sources(${PROJECT_NAME} PRIVATE ../NeoOnnx.rc)
-endif()
-
-if(USE_FINE_OBJECTS)
-    fine_unexport_symbols(${PROJECT_NAME})
 endif()

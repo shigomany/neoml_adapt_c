@@ -109,6 +109,11 @@ void CVulkanMathEngine::AddDiagMatrixToMatrix( const CConstFloatHandle& diagMatr
 void CVulkanMathEngine::TransposeMatrix( int batchSize, const CConstFloatHandle& firstHandle,
 	int height, int medium, int width, int channels, const CFloatHandle& resultHandle, int /*resultBufferSize*/ )
 {
+	if( medium == 1 && ( height == 1 || width == 1 ) ) {
+		VectorCopy( resultHandle, firstHandle, batchSize * height * medium * width * channels );
+		return;
+	}
+
 	int vectorSize = batchSize * height * medium * width * channels;
 	CMemoryHandle bufs[2] = { firstHandle, resultHandle };
 	size_t sizes[2] = { vectorSize * sizeof(float), vectorSize * sizeof(float) };
@@ -122,6 +127,11 @@ void CVulkanMathEngine::TransposeMatrix( int batchSize, const CConstFloatHandle&
 void CVulkanMathEngine::TransposeMatrix( int batchSize, const CConstIntHandle& firstHandle,
 	int height, int medium, int width, int channels, const CIntHandle& resultHandle, int /*resultBufferSize*/ )
 {
+	if( medium == 1 && ( height == 1 || width == 1 ) ) {
+		VectorCopy( resultHandle, firstHandle, batchSize * height * medium * width * channels );
+		return;
+	}
+
 	int vectorSize = batchSize * height * medium * width * channels;
 	CMemoryHandle bufs[2] = { firstHandle, resultHandle };
 	size_t sizes[2] = { vectorSize * sizeof(int), vectorSize * sizeof(int) };
@@ -728,6 +738,11 @@ void CVulkanMathEngine::SumMatrixRows( int batchSize, const CFloatHandle& result
 		&param, sizeof(param), 0, 0, 0, 0, bufs, sizes, 2, matrixWidth, 1, batchSize);
 }
 
+void CVulkanMathEngine::SumMatrixRows( int, const CIntHandle&, const CConstIntHandle&, int, int )
+{
+	ASSERT_EXPR( false );
+}
+
 void CVulkanMathEngine::SumMatrixColumns( const CFloatHandle& resultHandle, const CConstFloatHandle& matrixHandle,
 	int matrixHeight, int matrixWidth )
 {
@@ -1174,12 +1189,6 @@ void CVulkanMathEngine::MultiplyVectorByTransposedLookupVectorAndAddToTable( int
 
 void CVulkanMathEngine::SingularValueDecomposition( const CFloatHandle&, int, int, const CFloatHandle&, const CFloatHandle&,
 	const CFloatHandle&, const CFloatHandle&, bool, bool )
-{
-	ASSERT_EXPR( false );
-}
-
-void CVulkanMathEngine::SparseSingularValueDecomposition( const CSparseMatrixDesc&, int, int, const CFloatHandle&, const CFloatHandle&,
-	const CFloatHandle&, const CFloatHandle&, int, bool )
 {
 	ASSERT_EXPR( false );
 }
