@@ -83,48 +83,46 @@ namespace NeoML
 
 using namespace NeoML;
 
-#define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
-
 // --- Contructors --- //
 
-EXTERN_DLL_EXPORT void *CMemoryProblemInitEmpty();
+NEOML_API void *CMemoryProblemInitEmpty();
 
-EXTERN_DLL_EXPORT void *CMemoryProblemInit(int featureCount, int classCount, int rowsBufferSize = 0, int elementsBufferSize = 0);
+NEOML_API void *CMemoryProblemInit(int featureCount, int classCount, int rowsBufferSize = 0, int elementsBufferSize = 0);
 
 // --- Contructors --- //
 
 // --- Functions --- //
 
-EXTERN_DLL_EXPORT void CMemoryProblemAddFloatDesc(void *ptr, const CFloatVectorDesc &vector, double weight, int classNumber);
+NEOML_API void CMemoryProblemAddFloatDesc(void *ptr, const CFloatVectorDesc &vector, double weight, int classNumber);
 
-EXTERN_DLL_EXPORT void CMemoryProblemAddSparseFloatVector(void *ptr, const CSparseFloatVector &vector, double weight, int classNumber);
+NEOML_API void CMemoryProblemAddSparseFloatVector(void *ptr, const CSparseFloatVector &vector, double weight, int classNumber);
 
-EXTERN_DLL_EXPORT CFloatVectorDesc CMemoryProblemGetVector(void *ptr, int index);
+NEOML_API CFloatVectorDesc CMemoryProblemGetVector(void *ptr, int index);
 
-EXTERN_DLL_EXPORT void CMemoryProblemSetFeatureType(void *ptr, int index, bool isDiscrete);
+NEOML_API void CMemoryProblemSetFeatureType(void *ptr, int index, bool isDiscrete);
 
-EXTERN_DLL_EXPORT void CMemoryProblemSetDiscretizationValue(void *ptr, int index, int value);
+NEOML_API void CMemoryProblemSetDiscretizationValue(void *ptr, int index, int value);
 
-EXTERN_DLL_EXPORT void CMemoryProblemSetVectorWeight(void *ptr, int index, float weight);
+NEOML_API void CMemoryProblemSetVectorWeight(void *ptr, int index, float weight);
 
-EXTERN_DLL_EXPORT void CMemoryProblemSetClass(void *ptr, int index, int newClass);
+NEOML_API void CMemoryProblemSetClass(void *ptr, int index, int newClass);
 
-EXTERN_DLL_EXPORT int CMemoryProblemGetClassCount(void *ptr);
+NEOML_API int CMemoryProblemGetClassCount(void *ptr);
 
-EXTERN_DLL_EXPORT int CMemoryProblemGetFeatureCount(void *ptr);
+NEOML_API int CMemoryProblemGetFeatureCount(void *ptr);
 
-EXTERN_DLL_EXPORT bool CMemoryProblemIsDiscreteFeature(void *ptr, int index);
+NEOML_API bool CMemoryProblemIsDiscreteFeature(void *ptr, int index);
 
-EXTERN_DLL_EXPORT int CMemoryProblemGetVectorCount(void *ptr);
+NEOML_API int CMemoryProblemGetVectorCount(void *ptr);
 
-EXTERN_DLL_EXPORT int CMemoryProblemGetClass(void *ptr, int index);
+NEOML_API int CMemoryProblemGetClass(void *ptr, int index);
 
-EXTERN_DLL_EXPORT CFloatMatrixDesc CMemoryProblemGetMatrix(void *ptr);
+NEOML_API CFloatMatrixDesc CMemoryProblemGetMatrix(void *ptr);
 
-EXTERN_DLL_EXPORT double CMemoryProblemGetVectorWeight(void *ptr, int index);
+NEOML_API double CMemoryProblemGetVectorWeight(void *ptr, int index);
 
-EXTERN_DLL_EXPORT int CMemoryProblemGetDiscretizationValue(void *ptr, int index);
+NEOML_API int CMemoryProblemGetDiscretizationValue(void *ptr, int index);
 
-EXTERN_DLL_EXPORT double CMemoryProblemGetBinaryClass(void *ptr, int index);
+NEOML_API double CMemoryProblemGetBinaryClass(void *ptr, int index);
 
 // --- Functions --- //

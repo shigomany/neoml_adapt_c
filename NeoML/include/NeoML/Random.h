@@ -83,18 +83,17 @@ namespace NeoML
 } // namespace NeoML
 
 // Export C Methods
-#define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
 
-EXTERN_DLL_EXPORT void *CRandomInit(unsigned int seed);
+NEOML_API void *CRandomInit(unsigned int seed);
 
-EXTERN_DLL_EXPORT void *CRandomInitEmpty();
+NEOML_API void *CRandomInitEmpty();
 
-EXTERN_DLL_EXPORT void CRandomReset(void *ptr, unsigned int seed);
+NEOML_API void CRandomReset(void *ptr, unsigned int seed);
 
-EXTERN_DLL_EXPORT unsigned int CRandomNext(void *ptr);
+NEOML_API unsigned int CRandomNext(void *ptr);
 
-EXTERN_DLL_EXPORT double CRandomUniform(void *ptr, double min, double max);
+NEOML_API double CRandomUniform(void *ptr, double min, double max);
 
-EXTERN_DLL_EXPORT int CRandomUniformInt(void *ptr, int min, int max);
+NEOML_API int CRandomUniformInt(void *ptr, int min, int max);
 
-EXTERN_DLL_EXPORT double CRandomNormal(void *ptr, double mean, double sigma);
+NEOML_API double CRandomNormal(void *ptr, double mean, double sigma);

@@ -158,16 +158,14 @@ inline void SerializeModel( CArchive& archive, CPtr<TModel>& model )
 
 using namespace NeoML;
 
-#define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
-
 // --- Classification Model --- //
 
-EXTERN_DLL_EXPORT inline int IClassificationModelGetClassCount(void *ptr) {
+NEOML_API inline int IClassificationModelGetClassCount(void *ptr) {
 	auto instance = static_cast<IModel*>(ptr);
 	return instance->GetClassCount();
 }
 
-EXTERN_DLL_EXPORT inline void* IClassificationModelClassifyDesc(void *ptr, const CFloatVectorDesc& desc) {
+NEOML_API inline void* IClassificationModelClassifyDesc(void *ptr, const CFloatVectorDesc& desc) {
 	auto instance = static_cast<IModel*>(ptr);
 	CClassificationResult result;
 	instance->Classify(desc, result);
@@ -175,7 +173,7 @@ EXTERN_DLL_EXPORT inline void* IClassificationModelClassifyDesc(void *ptr, const
 	return &result;
 }
 
-EXTERN_DLL_EXPORT inline void* IClassificationModelClassifySparseFloatVector(void *ptr, const CSparseFloatVector& data) {
+NEOML_API inline void* IClassificationModelClassifySparseFloatVector(void *ptr, const CSparseFloatVector& data) {
 	auto instance = static_cast<IModel*>(ptr);
 	CClassificationResult result;
 	instance->Classify(data, result);
@@ -183,7 +181,7 @@ EXTERN_DLL_EXPORT inline void* IClassificationModelClassifySparseFloatVector(voi
 	return &result;
 }
 
-EXTERN_DLL_EXPORT inline void* IClassificationModelClassifyFloatVector(void *ptr, const CFloatVector& data) {
+NEOML_API inline void* IClassificationModelClassifyFloatVector(void *ptr, const CFloatVector& data) {
 	auto instance = static_cast<IModel*>(ptr);
 	CClassificationResult result;
 	instance->Classify(data, result);
@@ -195,19 +193,19 @@ EXTERN_DLL_EXPORT inline void* IClassificationModelClassifyFloatVector(void *ptr
 
 // --- Regression Model --- //
 
-EXTERN_DLL_EXPORT inline double IRegressionModelPredictDesc(void *ptr, const CFloatVectorDesc& desc) {
+NEOML_API inline double IRegressionModelPredictDesc(void *ptr, const CFloatVectorDesc& desc) {
 	auto instance = static_cast<IRegressionModel*>(ptr);
 
 	return instance->Predict(desc);
 }
 
-EXTERN_DLL_EXPORT inline double IRegressionModelPredictSparseFloatVector(void *ptr, const CSparseFloatVector& data) {
+NEOML_API inline double IRegressionModelPredictSparseFloatVector(void *ptr, const CSparseFloatVector& data) {
 	auto instance = static_cast<IRegressionModel*>(ptr);
 
 	return instance->Predict(data);
 }
 
-EXTERN_DLL_EXPORT inline double IRegressionModelPredictFloatVector(void *ptr, const CFloatVector& data) {
+NEOML_API inline double IRegressionModelPredictFloatVector(void *ptr, const CFloatVector& data) {
 	auto instance = static_cast<IRegressionModel*>(ptr);
 
 	return instance->Predict(data);

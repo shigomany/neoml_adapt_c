@@ -73,21 +73,19 @@ namespace NeoML
 
 using namespace NeoML;
 
-#define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
-
-EXTERN_DLL_EXPORT void *CArchiveFileInit(
+NEOML_API void *CArchiveFileInit(
 	const char *fileName,
 	int direction);
 
 
-EXTERN_DLL_EXPORT void CArchiveFileDispose(void* ptr);
+NEOML_API void CArchiveFileDispose(void* ptr);
 
-EXTERN_DLL_EXPORT void CArchiveFileOpen(void* ptr);
+NEOML_API void CArchiveFileOpen(void* ptr);
 
-EXTERN_DLL_EXPORT const char* CArchiveFileGetFileName(void* ptr);
+NEOML_API const char* CArchiveFileGetFileName(void* ptr);
 
-EXTERN_DLL_EXPORT int CArchiveFileRead(void* ptr, void* buffer, int bytesCount);
+NEOML_API int CArchiveFileRead(void* ptr, void* buffer, int bytesCount);
 
-EXTERN_DLL_EXPORT void CArchiveFileWrite(void* ptr, void* buffer, int bytesCount);
+NEOML_API void CArchiveFileWrite(void* ptr, void* buffer, int bytesCount);
 
-EXTERN_DLL_EXPORT void CArchiveFileClose(void* ptr);
+NEOML_API void CArchiveFileClose(void* ptr);

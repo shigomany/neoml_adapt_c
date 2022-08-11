@@ -237,59 +237,57 @@ namespace NeoML
 
 using namespace NeoML;
 
-#define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
-
-EXTERN_DLL_EXPORT struct CFloatVectorDesc CFloatVectorDescInit(
+NEOML_API struct CFloatVectorDesc CFloatVectorDescInit(
 	int Size,
 	int *Indexes,
 	float *Values);
 
 // --- Contructors --- //
 
-EXTERN_DLL_EXPORT void *CSparseFloatVectorInitEmpty();
+NEOML_API void *CSparseFloatVectorInitEmpty();
 
-EXTERN_DLL_EXPORT void *CSparseFloatVectorInitBufferSize(int bufferSize);
+NEOML_API void *CSparseFloatVectorInitBufferSize(int bufferSize);
 
-EXTERN_DLL_EXPORT void *CSparseFloatVectorInitFloatVector(const CFloatVectorDesc &other);
+NEOML_API void *CSparseFloatVectorInitFloatVector(const CFloatVectorDesc &other);
 
 // --- Contructors --- //
 
 // --- Functions --- //
 
-EXTERN_DLL_EXPORT CFloatVectorDesc *CSparseFloatVectorCopyOnWrite(void *ptr);
+NEOML_API CFloatVectorDesc *CSparseFloatVectorCopyOnWrite(void *ptr);
 
-EXTERN_DLL_EXPORT const CFloatVectorDesc &CSparseFloatVectorGetDesc(void *ptr);
+NEOML_API const CFloatVectorDesc &CSparseFloatVectorGetDesc(void *ptr);
 
-EXTERN_DLL_EXPORT int CSparseFloatVectorNumberOfElements(void *ptr);
+NEOML_API int CSparseFloatVectorNumberOfElements(void *ptr);
 
-EXTERN_DLL_EXPORT double CSparseFloatVectorNorm(void *ptr);
+NEOML_API double CSparseFloatVectorNorm(void *ptr);
 
-EXTERN_DLL_EXPORT double CSparseFloatVectorNormL1(void *ptr);
+NEOML_API double CSparseFloatVectorNormL1(void *ptr);
 
-EXTERN_DLL_EXPORT float CSparseFloatVectorMaxAbs(void *ptr);
+NEOML_API float CSparseFloatVectorMaxAbs(void *ptr);
 
-EXTERN_DLL_EXPORT void CSparseFloatVectorSetAt(void *ptr, int index, float value);
+NEOML_API void CSparseFloatVectorSetAt(void *ptr, int index, float value);
 
-EXTERN_DLL_EXPORT float CSparseFloatVectorGetValue(void *ptr, int index);
+NEOML_API float CSparseFloatVectorGetValue(void *ptr, int index);
 
-EXTERN_DLL_EXPORT void CSparseFloatVectorNullify(void *ptr);
+NEOML_API void CSparseFloatVectorNullify(void *ptr);
 
 // --- Functions --- //
 
 // --- Operations --- //
 
-EXTERN_DLL_EXPORT void* CSparseFloatVectorOpEqual(void *ptr, void* otherPtr);
+NEOML_API void* CSparseFloatVectorOpEqual(void *ptr, void* otherPtr);
 
-EXTERN_DLL_EXPORT void* CSparseFloatVectorOpPlusEqualSparse(void *ptr, void* otherPtr);
+NEOML_API void* CSparseFloatVectorOpPlusEqualSparse(void *ptr, void* otherPtr);
 
-EXTERN_DLL_EXPORT void* CSparseFloatVectorOpMinusEqualSparse(void *ptr, void* otherPtr);
+NEOML_API void* CSparseFloatVectorOpMinusEqualSparse(void *ptr, void* otherPtr);
 
-EXTERN_DLL_EXPORT void* CSparseFloatVectorOpPlusEqualDesc(void *ptr, const CFloatVectorDesc &other);
+NEOML_API void* CSparseFloatVectorOpPlusEqualDesc(void *ptr, const CFloatVectorDesc &other);
 
-EXTERN_DLL_EXPORT void* CSparseFloatVectorOpMinusEqualDesc(void *ptr, const CFloatVectorDesc &other);
+NEOML_API void* CSparseFloatVectorOpMinusEqualDesc(void *ptr, const CFloatVectorDesc &other);
 
-EXTERN_DLL_EXPORT void* CSparseFloatVectorOpMulEqual(void *ptr, double factor);
+NEOML_API void* CSparseFloatVectorOpMulEqual(void *ptr, double factor);
 
-EXTERN_DLL_EXPORT void* CSparseFloatVectorOpDivEqual(void *ptr, double factor);
+NEOML_API void* CSparseFloatVectorOpDivEqual(void *ptr, double factor);
 
 // --- Operations --- //

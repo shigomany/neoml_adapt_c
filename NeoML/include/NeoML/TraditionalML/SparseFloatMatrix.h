@@ -172,9 +172,7 @@ namespace NeoML
 
 using namespace NeoML;
 
-#define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
-
-EXTERN_DLL_EXPORT struct CFloatMatrixDesc CFloatMatrixDescInit(
+NEOML_API struct CFloatMatrixDesc CFloatMatrixDescInit(
 	int Height,
 	int Width,
 	int *Columns,
@@ -182,37 +180,37 @@ EXTERN_DLL_EXPORT struct CFloatMatrixDesc CFloatMatrixDescInit(
 	int *PointerB,
 	int *PointerE);
 
-EXTERN_DLL_EXPORT struct CFloatVectorDesc CFloatMatrixDescGetRow(
+NEOML_API struct CFloatVectorDesc CFloatMatrixDescGetRow(
 	struct CFloatMatrixDesc &matrix, int index);
 
 // --- Contructors --- //
 
-EXTERN_DLL_EXPORT void *CSparseFloatMatrixInitEmpty();
+NEOML_API void *CSparseFloatMatrixInitEmpty();
 
-EXTERN_DLL_EXPORT void *CSparseFloatMatrixInit(int width, int rowsBufferSize = 0, int elementsBufferSize = 0);
+NEOML_API void *CSparseFloatMatrixInit(int width, int rowsBufferSize = 0, int elementsBufferSize = 0);
 
-EXTERN_DLL_EXPORT void *CSparseFloatMatrixInitDesc(const CFloatMatrixDesc &desc);
+NEOML_API void *CSparseFloatMatrixInitDesc(const CFloatMatrixDesc &desc);
 
 // --- Contructors --- //
 
 // --- Functions --- //
 
-EXTERN_DLL_EXPORT CFloatMatrixDesc *CSparseFloatMatrixCopyOnWrite(void* ptr);
+NEOML_API CFloatMatrixDesc *CSparseFloatMatrixCopyOnWrite(void* ptr);
 
-EXTERN_DLL_EXPORT const CFloatMatrixDesc &CSparseFloatMatrixGetDesc(void* ptr);
+NEOML_API const CFloatMatrixDesc &CSparseFloatMatrixGetDesc(void* ptr);
 
-EXTERN_DLL_EXPORT int CSparseFloatMatrixGetHeight(void* ptr);
+NEOML_API int CSparseFloatMatrixGetHeight(void* ptr);
 
-EXTERN_DLL_EXPORT int CSparseFloatMatrixGetWidth(void* ptr);
+NEOML_API int CSparseFloatMatrixGetWidth(void* ptr);
 
-EXTERN_DLL_EXPORT void CSparseFloatMatrixGrowInRows(void* ptr, int newRowsBufferSize);
+NEOML_API void CSparseFloatMatrixGrowInRows(void* ptr, int newRowsBufferSize);
 
-EXTERN_DLL_EXPORT void CSparseFloatMatrixGrowInElements(void* ptr, int newElementsBufferSize);
+NEOML_API void CSparseFloatMatrixGrowInElements(void* ptr, int newElementsBufferSize);
 
-EXTERN_DLL_EXPORT void CSparseFloatMatrixAddRowVector(void* ptr, void *ptrVector);
+NEOML_API void CSparseFloatMatrixAddRowVector(void* ptr, void *ptrVector);
 
-EXTERN_DLL_EXPORT void CSparseFloatMatrixAddRowDesc(void* ptr, const CFloatVectorDesc &row);
+NEOML_API void CSparseFloatMatrixAddRowDesc(void* ptr, const CFloatVectorDesc &row);
 
-EXTERN_DLL_EXPORT CFloatVectorDesc CSparseFloatMatrixGetRow(void* ptr, int index);
+NEOML_API CFloatVectorDesc CSparseFloatMatrixGetRow(void* ptr, int index);
 
 // --- Functions --- //

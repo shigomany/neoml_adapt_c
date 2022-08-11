@@ -58,24 +58,22 @@ namespace NeoML
 
 using namespace NeoML;
 
-#define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
-
 // --- Contructors --- //
 
-EXTERN_DLL_EXPORT void *CLinearBinaryModelInit(void *ptrPlane, const CSigmoid &sigmoidCoefficients);
+NEOML_API void *CLinearBinaryModelInit(void *ptrPlane, const CSigmoid &sigmoidCoefficients);
 
 // --- Contructors --- //
 
 // --- Functions --- //
 
-EXTERN_DLL_EXPORT int CLinearBinaryModelGetClassCount(void *ptr);
+NEOML_API int CLinearBinaryModelGetClassCount(void *ptr);
 
-EXTERN_DLL_EXPORT void* CLinearBinaryModelClassify(void *ptr, const CFloatVectorDesc& desc);
+NEOML_API void* CLinearBinaryModelClassify(void *ptr, const CFloatVectorDesc& desc);
 
-EXTERN_DLL_EXPORT const void* CLinearBinaryModelGetPlane(void *ptr);
+NEOML_API const void* CLinearBinaryModelGetPlane(void *ptr);
 
-EXTERN_DLL_EXPORT struct CSigmoid CLinearBinaryModelGetSigmoid(void *ptr);
+NEOML_API struct CSigmoid CLinearBinaryModelGetSigmoid(void *ptr);
 
-EXTERN_DLL_EXPORT double CLinearBinaryModelPredict(void *ptr, const CFloatVectorDesc &data);
+NEOML_API double CLinearBinaryModelPredict(void *ptr, const CFloatVectorDesc &data);
 
 // --- Functions --- //

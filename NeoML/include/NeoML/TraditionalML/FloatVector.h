@@ -458,42 +458,40 @@ namespace NeoML
 
 using namespace NeoML;
 
-#define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
-
 // --- Contructors --- //
 
-EXTERN_DLL_EXPORT void *CFloatVectorFromSparseVector(int size, void* ptrSparseVector);
+NEOML_API void *CFloatVectorFromSparseVector(int size, void* ptrSparseVector);
 
-EXTERN_DLL_EXPORT void *CFloatVectorFromVectorDesc(int size, const CFloatVectorDesc &floatVectorDesc);
+NEOML_API void *CFloatVectorFromVectorDesc(int size, const CFloatVectorDesc &floatVectorDesc);
 
-EXTERN_DLL_EXPORT void *CFloatVectorInit(int size, float init);
+NEOML_API void *CFloatVectorInit(int size, float init);
 
 // --- Contructors --- //
 
 // --- Functions --- //
 
-EXTERN_DLL_EXPORT bool CFloatVectorIsNull(void *ptr);
+NEOML_API bool CFloatVectorIsNull(void *ptr);
 
-EXTERN_DLL_EXPORT int CFloatVectorSize(void *ptr);
+NEOML_API int CFloatVectorSize(void *ptr);
 
-EXTERN_DLL_EXPORT double CFloatVectorNorm(void *ptr);
+NEOML_API double CFloatVectorNorm(void *ptr);
 
-EXTERN_DLL_EXPORT double CFloatVectorNormL1(void *ptr);
+NEOML_API double CFloatVectorNormL1(void *ptr);
 
-EXTERN_DLL_EXPORT float CFloatVectorMaxAbs(void *ptr);
+NEOML_API float CFloatVectorMaxAbs(void *ptr);
 
-EXTERN_DLL_EXPORT float CFloatVectorGetValue(void *ptr, int index);
+NEOML_API float CFloatVectorGetValue(void *ptr, int index);
 
-EXTERN_DLL_EXPORT void CFloatVectorSetValue(void *ptr, int index, float value);
+NEOML_API void CFloatVectorSetValue(void *ptr, int index, float value);
 
-EXTERN_DLL_EXPORT float *CFloatVectorCopyOnWrite(void *ptr);
+NEOML_API float *CFloatVectorCopyOnWrite(void *ptr);
 
-EXTERN_DLL_EXPORT struct CFloatVectorDesc CFloatVectorGetDesc(void *ptr);
+NEOML_API struct CFloatVectorDesc CFloatVectorGetDesc(void *ptr);
 
-EXTERN_DLL_EXPORT void CFloatVectorNullify(void *ptr);
+NEOML_API void CFloatVectorNullify(void *ptr);
 
-EXTERN_DLL_EXPORT const float *CFloatVectorGetPtr(void *ptr);
+NEOML_API const float *CFloatVectorGetPtr(void *ptr);
 
-EXTERN_DLL_EXPORT void *CFloatVectorSparseVector(void *ptr);
+NEOML_API void *CFloatVectorSparseVector(void *ptr);
 
 // --- Functions --- //

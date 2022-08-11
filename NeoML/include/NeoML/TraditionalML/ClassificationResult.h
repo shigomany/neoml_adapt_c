@@ -44,11 +44,10 @@ namespace NeoML
 
 using namespace NeoML;
 // using namespace std;
-#define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
 
 // --- Functions --- //
 
-EXTERN_DLL_EXPORT inline double *CClassificationResultGetProbabilities(void* ptr) {
+NEOML_API inline double *CClassificationResultGetProbabilities(void* ptr) {
 	auto instance = static_cast<CClassificationResult*>(ptr);
 
 	double* outputProbs = new double[instance->Probabilities.Size()];
@@ -60,17 +59,17 @@ EXTERN_DLL_EXPORT inline double *CClassificationResultGetProbabilities(void* ptr
 	return outputProbs;
 }
 
-EXTERN_DLL_EXPORT inline int CClassificationResultProbabilitiesSize(void* ptr) {
+NEOML_API inline int CClassificationResultProbabilitiesSize(void* ptr) {
 	auto instance = static_cast<CClassificationResult*>(ptr);
 	return instance->Probabilities.Size();
 }
 
-EXTERN_DLL_EXPORT inline int CClassificationResultGetPreferredClass(void* ptr) {
+NEOML_API inline int CClassificationResultGetPreferredClass(void* ptr) {
 	auto instance = static_cast<CClassificationResult*>(ptr);
 	return instance->PreferredClass;
 }
 
-EXTERN_DLL_EXPORT inline double CClassificationResultGetExceptionProbability(void* ptr) {
+NEOML_API inline double CClassificationResultGetExceptionProbability(void* ptr) {
 	auto instance = static_cast<CClassificationResult*>(ptr);
 	return instance->ExceptionProbability.GetValue();
 }

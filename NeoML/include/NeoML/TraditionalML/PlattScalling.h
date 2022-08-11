@@ -78,11 +78,9 @@ void NEOML_API CalcSigmoidCoefficients( const CCrossValidationResult& crossValid
 
 using namespace NeoML;
 
-#define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
+NEOML_API struct CSigmoid CSigmoidInit(double a, double b);
 
-EXTERN_DLL_EXPORT struct CSigmoid CSigmoidInit(double a, double b);
+NEOML_API bool CSigmoidIsValid(const CSigmoid& ptr);
 
-EXTERN_DLL_EXPORT bool CSigmoidIsValid(const CSigmoid& ptr);
-
-EXTERN_DLL_EXPORT double CSigmoidDistanceToProbability(const CSigmoid& ptr, double distance);
+NEOML_API double CSigmoidDistanceToProbability(const CSigmoid& ptr, double distance);
 

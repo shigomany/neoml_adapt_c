@@ -204,9 +204,7 @@ namespace NeoML
 
 using namespace NeoML;
 
-#define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
-
-EXTERN_DLL_EXPORT void *CDecisionTreeInit(
+NEOML_API void *CDecisionTreeInit(
 	int MinContinuousSubsetSize,
 	int MinDiscreteSubsetSize,
 	double MinDiscreteSubsetPart,
@@ -222,14 +220,14 @@ EXTERN_DLL_EXPORT void *CDecisionTreeInit(
 	void* ptrCRandom = 0
 );
 
-// EXTERN_DLL_EXPORT void *CDecisionTreeInitEmpty();
+// NEOML_API void *CDecisionTreeInitEmpty();
 
-// EXTERN_DLL_EXPORT void CDecisionTreeReset(void *ptr, unsigned int seed);
+// NEOML_API void CDecisionTreeReset(void *ptr, unsigned int seed);
 
-// EXTERN_DLL_EXPORT unsigned int CDecisionTreeNext(void *ptr);
+// NEOML_API unsigned int CDecisionTreeNext(void *ptr);
 
-// EXTERN_DLL_EXPORT double CDecisionTreeUniform(void *ptr, double min, double max);
+// NEOML_API double CDecisionTreeUniform(void *ptr, double min, double max);
 
-// EXTERN_DLL_EXPORT int CDecisionTreeUniformInt(void *ptr, int min, int max);
+// NEOML_API int CDecisionTreeUniformInt(void *ptr, int min, int max);
 
-// EXTERN_DLL_EXPORT double CDecisionTreeNormal(void *ptr, double mean, double sigma);
+// NEOML_API double CDecisionTreeNormal(void *ptr, double mean, double sigma);
