@@ -1,7 +1,0 @@
-SUBJECT:
-Build %BUILD_NAME% published
-TO:
-$$MailList.txt
-.
-BODY:
-This message was generated automatically by Build. Please do not reply.
