@@ -1,0 +1,5 @@
+if(EXISTS "/Users/shigomany/Documents/workingprojects/dart-neoml/neoml/Build/test/desktop/NeoMLTest[1]_tests.cmake")
+  include("/Users/shigomany/Documents/workingprojects/dart-neoml/neoml/Build/test/desktop/NeoMLTest[1]_tests.cmake")
+else()
+  add_test(NeoMLTest_NOT_BUILT NeoMLTest_NOT_BUILT)
+endif()
